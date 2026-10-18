@@ -548,6 +548,11 @@ const REUNIAO = require('./reuniao').init({ ROOT, lerRegistro, CLAUDE_BIN, confi
   avisar: (t, x, p) => AVISOS.avisar(t, x, p).catch(() => {}) });
 REUNIAO.agendar(equipeDoDisco);
 
+/* as rotinas diárias dos agentes — ver rotinas.js */
+const ROTINAS = require('./rotinas').init({ ROOT, lerRegistro, CLAUDE_BIN, INTEGRACOES,
+  avisar: (t, x, p) => AVISOS.avisar(t, x, p).catch(() => {}),
+  nomeDoAgente: (sis) => { const a = equipeDoDisco().find(a => a.sistema === sis); return a ? a.name : null; } });
+
 const PAPEL =
   'Você é o agente responsável por este sistema dentro do escritório de agentes, ' +
   'o painel que o dono usa para acompanhar os agentes dele. Responda em português do ' +
@@ -767,6 +772,25 @@ const servidor = http.createServer(async (req, res) => {
   }
   if (rota === '/api/reuniao/parar' && req.method === 'POST') {
     return json(res, 200, REUNIAO.parar());
+  }
+
+  /* rotinas: tarefas com dia e hora para cada agente */
+  if (rota === '/api/rotinas' && req.method === 'GET') return json(res, 200, ROTINAS.estadoAtual());
+  if (rota === '/api/rotinas' && req.method === 'PUT') {
+    let bruto = '';
+    req.on('data', c => { bruto += c; if (bruto.length > 1e6) req.destroy(); });
+    req.on('end', () => {
+      let d; try { d = JSON.parse(bruto); } catch (e) { return json(res, 400, { ok: false, motivo: 'json inválido' }); }
+      const r = ROTINAS.salvarLista(d && d.rotinas);
+      return json(res, r.ok ? 200 : 400, r.ok ? ROTINAS.estadoAtual() : r);
+    });
+    return;
+  }
+  const mRot = rota.match(/^\/api\/rotinas\/([a-z0-9-]+)\/rodar$/);
+  if (mRot && req.method === 'POST') {
+    if (ROTINAS.ocupado()) return json(res, 409, { ok: false, motivo: 'outra rotina está rodando agora' });
+    ROTINAS.rodar(mRot[1]).catch(() => {});        // roda em segundo plano; a tela acompanha pelo GET
+    return json(res, 200, { ok: true });
   }
 
   if (rota === '/api/claude' && req.method === 'GET') {

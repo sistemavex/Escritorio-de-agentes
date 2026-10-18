@@ -4,6 +4,7 @@ node_modules/
 data/*.json
 !data/sistemas.exemplo.json
 !data/config.exemplo.json
+!data/rotinas.exemplo.json
 data/logs/
 data/reunioes/
 

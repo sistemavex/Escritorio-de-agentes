@@ -49,15 +49,15 @@ Cada um tem uma pasta em `agentes-vex/` com:
 
 | Nº | Agente | Função | Porta |
 | --- | --- | --- | --- |
-| 01 | Heitor | Diretor de Operações e Portfólio | 4411 |
-| 02 | Paula | Planejamento e Controle de Obras | 4412 |
+| 01 | Sheldon | Diretor de Operações e Portfólio | 4411 |
+| 02 | Rito | Planejamento e Controle de Obras | 4412 |
 | 03 | Otto | Controller Operacional | 4413 |
-| 04 | Caio | Coordenador de Obras | 4414 |
-| 05 | Sérgio | Suprimentos e Compras | 4415 |
-| 06 | Rita | Financeiro, Custos e Performance | 4416 |
-| 07 | Marta | Comercial, Propostas e Contratos | 4417 |
-| 08 | Nina | Marketing e Conteúdo | 4418 |
-| 09 | Bruna | Atendimento, Pós-obra e Assistência | 4419 |
+| 04 | Benício | Coordenador de Obras | 4414 |
+| 05 | Luíza | Suprimentos e Compras | 4415 |
+| 06 | Lúcia | Financeiro, Custos e Performance | 4416 |
+| 07 | Analú | Comercial, Propostas e Contratos | 4417 |
+| 08 | Ana Luíza | Marketing e Conteúdo | 4418 |
+| 09 | Enrico | Atendimento, Pós-obra e Assistência | 4419 |
 
 Em **💬 Conversar**, os cinco comandos rápidos do agente aparecem como
 botões. Use **Investigar** para ele só ler e responder, e **Resolver** para ele
@@ -140,6 +140,24 @@ Seus sistemas também podem pedir um aviso:
 POST http://localhost:4321/api/avisar
 { "titulo": "Meu agente", "texto": "3 pedidos esperando", "prioridade": "normal" }
 ```
+
+## Rotinas dos agentes
+
+Cada agente pode ter tarefas com dia e hora, por exemplo "Otto, seg a sáb às
+7h30: AUDITAR RDOs". Elas ficam na ficha do agente, no escritório 3D (seção
+**Rotinas**): comando, horário, dias, ativa/desligada, **▶ Rodar agora** e o
+resultado da última execução.
+
+- Na hora marcada o escritório manda o comando ao agente em modo somente
+  leitura; a resposta vira uma entrega em `agentes-vex/<pasta>/entregas/`, que
+  aparece no painel dele, e um aviso vai para o celular se os avisos estiverem
+  ligados.
+- Uma de cada vez. Se o escritório estava desligado, a rotina roda quando ele
+  voltar, até 12 horas depois; nunca duas vezes para o mesmo horário. Rotina
+  nova ou com horário mudado só vale dali para frente.
+- Ficam em `data/rotinas.json` (fora do git); na primeira vez nascem de
+  `data/rotinas.exemplo.json`.
+- Cada execução é uma chamada ao Claude e consome a cota do plano.
 
 ## Agenda
 

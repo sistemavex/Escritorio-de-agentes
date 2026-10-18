@@ -49,12 +49,12 @@ Estas regras de operação valem junto com o prompt acima. Se houver conflito, o
 
 | Nº | Nome | Função | Pasta |
 |----|------|--------|-------|
-| 01 | Heitor | Diretor de Operações e Portfólio | `../01-diretor-operacoes` |
-| 02 | Paula | Planejamento e Controle de Obras | `../02-planejamento-obras` |
+| 01 | Sheldon | Diretor de Operações e Portfólio | `../01-diretor-operacoes` |
+| 02 | Rito | Planejamento e Controle de Obras | `../02-planejamento-obras` |
 | 03 | Otto | Controller Operacional | `../03-controller-operacional` |
-| 04 | Caio | Coordenador de Obras | `../04-coordenador-obras` |
-| 05 | Sérgio | Suprimentos e Compras | `../05-suprimentos-compras` |
-| 06 | Rita | Financeiro, Custos e Performance | `../06-financeiro-custos` |
-| 07 | Marta | Comercial, Propostas e Contratos | `../07-comercial-contratos` |
-| 08 | Nina | Marketing e Conteúdo | `../08-marketing-conteudo` |
-| 09 | Bruna | Atendimento, Pós-obra e Assistência | `../09-atendimento-pos-obra` |
+| 04 | Benício | Coordenador de Obras | `../04-coordenador-obras` |
+| 05 | Luíza | Suprimentos e Compras | `../05-suprimentos-compras` |
+| 06 | Lúcia | Financeiro, Custos e Performance | `../06-financeiro-custos` |
+| 07 | Analú | Comercial, Propostas e Contratos | `../07-comercial-contratos` |
+| 08 | Ana Luíza | Marketing e Conteúdo | `../08-marketing-conteudo` |
+| 09 | Enrico | Atendimento, Pós-obra e Assistência | `../09-atendimento-pos-obra` |

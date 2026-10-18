@@ -30,15 +30,15 @@
   /* ------------------------------------------------------------ os 9 agentes do Grupo VEX (pasta agentes-vex/) */
   const CATALOG = [
     { key: 'exemplo', name: 'EXEMPLO', role: 'Agente de demonstração', emoji: '🤖', sistema: 'exemplo', system: 'Agente de exemplo', desc: 'Um sistema mínimo que vem junto, na pasta exemplo-agente: sobe na porta 4401 e mostra uma página. Serve de molde para cadastrar os seus.' },
-    { key: 'vex-diretor-operacoes', name: 'Heitor', role: 'Diretor de Operações e Portfólio', emoji: '🧭', sistema: 'vex-diretor-operacoes', system: '01 · Diretor de Operações e Portfólio', desc: 'Coordenar a operação do Grupo VEX, transformar objetivos em prioridades, conectar os agentes e levar à direção decisões baseadas em dados.' },
-    { key: 'vex-planejamento', name: 'Paula', role: 'Planejamento e Controle de Obras', emoji: '📅', sistema: 'vex-planejamento-obras', system: '02 · Planejamento e Controle de Obras', desc: 'Manter cronogramas e restrições atualizados, analisar desvios e transformar o planejamento em ações executáveis.' },
+    { key: 'vex-diretor-operacoes', name: 'Sheldon', role: 'Diretor de Operações e Portfólio', emoji: '🧭', sistema: 'vex-diretor-operacoes', system: '01 · Diretor de Operações e Portfólio', desc: 'Coordenar a operação do Grupo VEX, transformar objetivos em prioridades, conectar os agentes e levar à direção decisões baseadas em dados.' },
+    { key: 'vex-planejamento', name: 'Rito', role: 'Planejamento e Controle de Obras', emoji: '📅', sistema: 'vex-planejamento-obras', system: '02 · Planejamento e Controle de Obras', desc: 'Manter cronogramas e restrições atualizados, analisar desvios e transformar o planejamento em ações executáveis.' },
     { key: 'vex-controller', name: 'Otto', role: 'Controller Operacional', emoji: '🔎', sistema: 'vex-controller-operacional', system: '03 · Controller Operacional', desc: 'Auditar completude e consistência dos registros de obra, preparar lançamentos e cobrar correções sem inventar fatos de campo.' },
-    { key: 'vex-coordenador-obras', name: 'Caio', role: 'Coordenador de Obras', emoji: '🦺', sistema: 'vex-coordenador-obras', system: '04 · Coordenador de Obras', desc: 'Conduzir a resolução dos problemas operacionais de campo e garantir que cada impedimento tenha dono, prazo e evidência de conclusão.' },
-    { key: 'vex-suprimentos', name: 'Sérgio', role: 'Suprimentos e Compras', emoji: '📦', sistema: 'vex-suprimentos-compras', system: '05 · Suprimentos e Compras', desc: 'Conduzir o fluxo de suprimentos do pedido até a conferência do recebimento e o vínculo documental, monitorando prazos e divergências.' },
-    { key: 'vex-financeiro', name: 'Rita', role: 'Financeiro, Custos e Performance', emoji: '💰', sistema: 'vex-financeiro-custos', system: '06 · Financeiro, Custos e Performance', desc: 'Consolidar dados financeiros e custos por obra, identificar desvios e preparar análises confiáveis para decisão.' },
-    { key: 'vex-comercial', name: 'Marta', role: 'Comercial, Propostas e Contratos', emoji: '🤝', sistema: 'vex-comercial-contratos', system: '07 · Comercial, Propostas e Contratos', desc: 'Organizar prospecção, oportunidades, propostas e obrigações contratuais das empresas do grupo.' },
-    { key: 'vex-marketing', name: 'Nina', role: 'Marketing e Conteúdo', emoji: '📣', sistema: 'vex-marketing-conteudo', system: '08 · Marketing e Conteúdo', desc: 'Planejar e organizar comunicação e conteúdo de cada marca, gerando materiais coerentes com a estratégia e medindo resultados reais.' },
-    { key: 'vex-atendimento', name: 'Bruna', role: 'Atendimento, Pós-obra e Assistência', emoji: '🛠️', sistema: 'vex-atendimento-pos-obra', system: '09 · Atendimento, Pós-obra e Assistência', desc: 'Triar solicitações de clientes, organizar chamados e acompanhar a resolução com rastreabilidade até o encerramento.' }
+    { key: 'vex-coordenador-obras', name: 'Benício', role: 'Coordenador de Obras', emoji: '🦺', sistema: 'vex-coordenador-obras', system: '04 · Coordenador de Obras', desc: 'Conduzir a resolução dos problemas operacionais de campo e garantir que cada impedimento tenha dono, prazo e evidência de conclusão.' },
+    { key: 'vex-suprimentos', name: 'Luíza', role: 'Suprimentos e Compras', emoji: '📦', sistema: 'vex-suprimentos-compras', system: '05 · Suprimentos e Compras', desc: 'Conduzir o fluxo de suprimentos do pedido até a conferência do recebimento e o vínculo documental, monitorando prazos e divergências.' },
+    { key: 'vex-financeiro', name: 'Lúcia', role: 'Financeiro, Custos e Performance', emoji: '💰', sistema: 'vex-financeiro-custos', system: '06 · Financeiro, Custos e Performance', desc: 'Consolidar dados financeiros e custos por obra, identificar desvios e preparar análises confiáveis para decisão.' },
+    { key: 'vex-comercial', name: 'Analú', role: 'Comercial, Propostas e Contratos', emoji: '🤝', sistema: 'vex-comercial-contratos', system: '07 · Comercial, Propostas e Contratos', desc: 'Organizar prospecção, oportunidades, propostas e obrigações contratuais das empresas do grupo.' },
+    { key: 'vex-marketing', name: 'Ana Luíza', role: 'Marketing e Conteúdo', emoji: '📣', sistema: 'vex-marketing-conteudo', system: '08 · Marketing e Conteúdo', desc: 'Planejar e organizar comunicação e conteúdo de cada marca, gerando materiais coerentes com a estratégia e medindo resultados reais.' },
+    { key: 'vex-atendimento', name: 'Enrico', role: 'Atendimento, Pós-obra e Assistência', emoji: '🛠️', sistema: 'vex-atendimento-pos-obra', system: '09 · Atendimento, Pós-obra e Assistência', desc: 'Triar solicitações de clientes, organizar chamados e acompanhar a resolução com rastreabilidade até o encerramento.' }
   ];
 
   // mesma aparência das vagas no escritório isométrico (js/roster.js)
@@ -90,6 +90,75 @@
     try { return JSON.parse(t); } catch (e) { return { ok: false, motivo: 'resposta inesperada do servidor' }; }
   }
   const post = (path, body) => api(path, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body || {}) });
+  /* rotinas: tarefas com dia e hora para cada agente (rotinas.js no servidor) */
+  let rotinas = [], rotinaRodando = null;
+  async function refreshRotinas() {
+    if (!live) return;
+    try { const d = await api('/api/rotinas'); if (Array.isArray(d.rotinas)) { rotinas = d.rotinas; rotinaRodando = d.rodando; } } catch (e) { /* mantém */ }
+  }
+  async function salvarRotinas(lista) {
+    const d = await api('/api/rotinas', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ rotinas: lista }) }).catch(() => ({ ok: false, motivo: 'servidor fora do ar' }));
+    if (d.ok === false) toast('Rotina não salva: ' + (d.motivo || 'erro')); else { rotinas = d.rotinas; rotinaRodando = d.rodando; }
+    render();
+  }
+  const DIA3 = ['dom', 'seg', 'ter', 'qua', 'qui', 'sex', 'sáb'];
+  const quandoTxt = (t) => { if (!t) return '—'; const d = new Date(t), hoje = new Date(); const hh = d.toTimeString().slice(0, 5);
+    return d.toDateString() === hoje.toDateString() ? 'hoje ' + hh : DIA3[d.getDay()] + ' ' + d.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' }) + ' ' + hh; };
+  function rotinasCard(a, s) {
+    const minhas = rotinas.filter(r => r.sistema === s.id);
+    const cmds = s.comandos || [];
+    return `<h3>Rotinas</h3>
+      <datalist id="dl-cmd">${cmds.map(c => `<option value="${esc(c)}">`).join('')}</datalist>
+      ${minhas.map(r => {
+        const u = r.ultima, rodandoAgora = (rotinaRodando && rotinaRodando.id === r.id) || r.emCurso;
+        const link = u && u.arquivo && s.porta ? ` · <a href="http://localhost:${s.porta}/entregas/${encodeURIComponent(u.arquivo)}" target="_blank" rel="noopener">ver entrega</a>` : '';
+        return `<div class="rot" data-rid="${esc(r.id)}">
+          <div class="row"><div class="field" style="flex:1 1 180px"><input list="dl-cmd" data-f="comando" value="${esc(r.comando)}" maxlength="400" aria-label="Comando"></div>
+            <input type="time" class="btn" data-f="hora" value="${esc(r.hora)}" aria-label="Horário">
+            <label class="row muted"><input type="checkbox" data-f="ativo" ${r.ativo !== false ? 'checked' : ''}> ativa</label></div>
+          <div class="row">${['D', 'S', 'T', 'Q', 'Q', 'S', 'S'].map((n, i) => `<button class="btn" data-rd="${i}" aria-pressed="${(r.dias || []).includes(i)}" title="${DIA3[i]}">${n}</button>`).join('')}</div>
+          <p class="muted">${rodandoAgora ? '⏳ rodando agora…' : r.ativo === false ? 'desligada' : 'Próxima: ' + quandoTxt(r.proxima)}${u ? ` · Última: ${u.ok ? '✓' : '✕'} ${quandoTxt(u.quando)}${u.custo ? ' · US$ ' + u.custo.toFixed(2) : ''}${link}` : ''}</p>
+          ${u && !u.ok && u.erro ? `<p class="notice">${esc(u.erro)}</p>` : ''}
+          <div class="row"><button class="btn" data-ra="rodar" ${rodandoAgora || rotinaRodando ? 'disabled' : ''}>▶ Rodar agora</button><button class="btn danger" data-ra="tirar">Remover</button></div>
+        </div>`;
+      }).join('') || '<p class="muted">Nenhuma rotina.</p>'}
+      <div class="row"><button class="btn" data-ra="nova">+ Nova rotina</button></div>
+      <p class="muted">Na hora marcada o agente executa o comando só lendo os dados, e a resposta vira uma entrega no painel dele. O escritório precisa estar ligado. Cada execução consome a cota do plano Claude.</p>`;
+  }
+  function bindRotinas(a, s, c) {
+    const copia = () => rotinas.map(r => ({ ...r }));
+    c.querySelectorAll('.rot').forEach(el => {
+      const id = el.dataset.rid;
+      const muda = (fn) => { const l = copia(); const r = l.find(x => x.id === id); if (r) { fn(r); salvarRotinas(l); } };
+      el.querySelector('[data-f="comando"]').addEventListener('change', e => { const v = e.target.value.trim(); if (v) muda(r => { r.comando = v; }); });
+      el.querySelector('[data-f="hora"]').addEventListener('change', e => { if (e.target.value) muda(r => { r.hora = e.target.value; }); });
+      el.querySelector('[data-f="ativo"]').addEventListener('change', e => muda(r => { r.ativo = e.target.checked; }));
+      el.querySelectorAll('[data-rd]').forEach(b => b.addEventListener('click', () => muda(r => {
+        const d = +b.dataset.rd; const set = new Set(r.dias || []); set.has(d) ? set.delete(d) : set.add(d);
+        if (!set.size) return toast('A rotina precisa de pelo menos um dia.'); r.dias = [...set].sort();
+      })));
+      el.querySelector('[data-ra="rodar"]').addEventListener('click', async () => {
+        const r = await post(`/api/rotinas/${id}/rodar`);
+        if (r.ok === false) return toast(r.motivo || 'não consegui rodar');
+        toast(`${a.name} começou a rotina. Leva alguns minutos.`); await refreshRotinas(); render(); acompanharRotina();
+      });
+      el.querySelector('[data-ra="tirar"]').addEventListener('click', (e) => {
+        if (!e.target.dataset.confirm) { e.target.dataset.confirm = '1'; e.target.textContent = 'Confirmar remoção'; return; }
+        salvarRotinas(copia().filter(x => x.id !== id));
+      });
+    });
+    const nova = c.querySelector('[data-ra="nova"]');
+    if (nova) nova.addEventListener('click', () => salvarRotinas([...copia(), { sistema: s.id, dias: [1, 2, 3, 4, 5], hora: '08:00', comando: (s.comandos || [])[0] || 'Resuma o que mudou desde ontem.', ativo: true }]));
+  }
+  let acompanhando = null;
+  function acompanharRotina() {
+    clearInterval(acompanhando);
+    acompanhando = setInterval(async () => {
+      await refreshRotinas();
+      if (!rotinaRodando) { clearInterval(acompanhando); acompanhando = null; toast('Rotina concluída. A entrega está no painel do agente.'); }
+      if (!document.activeElement.closest('#card')) render();
+    }, 5000);
+  }
   async function refreshSistemas() {
     if (!live) return;
     try { const d = await api('/api/sistemas'); if (Array.isArray(d)) sistemas = d; } catch (e) { /* mantém o último */ }
@@ -308,6 +377,7 @@
         <button class="btn" data-a="abrir">🖥️ Abrir o sistema</button>${isLocal ? '<button class="btn" data-a="log">Log</button>' : ''}${s.pasta ? '<button class="btn primary" data-a="chat">💬 Conversar</button>' : ''}</div>
         ${s.erro ? `<p class="notice">${esc(s.erro)}</p>` : ''}`
         : a.sistema ? `<p class="notice">O sistema "${esc(a.sistema)}" não está no registro deste computador.</p>` : `<p class="muted">Sem sistema ligado. ${live ? '' : '(modo demonstração)'}</p>`}
+      ${live && s && s.pasta && !a.boss ? rotinasCard(a, s) : ''}
       ${a.boss ? '' : `<div class="row"><button class="btn" data-a="vincular">${s ? 'Trocar sistema' : 'Ligar um sistema'}</button>
         <label class="row muted"><input type="checkbox" id="k-reu" ${a.reuniao !== false ? 'checked' : ''}> participa da reunião</label></div>`}
       <h3>Ficha</h3>
@@ -321,6 +391,7 @@
     c.querySelectorAll('[data-st]').forEach(b => b.addEventListener('click', () => setStatus(a, b.dataset.st)));
     const mesa = $('#k-mesa', c); if (mesa) mesa.addEventListener('change', () => { a.slot3d = mesa.value || null; if (a.status !== 'trabalhando') a.status = 'trabalhando'; save(); world.sync(team); render(); });
     const reu = $('#k-reu', c); if (reu) reu.addEventListener('change', () => { a.reuniao = reu.checked; save(); });
+    const sRot = sys(a.sistema); if (live && sRot && sRot.pasta) bindRotinas(a, sRot, c);
     // horário de trabalho
     const salvaHorario = () => {
       const i = $('#k-h1', c).value, f = $('#k-h2', c).value;
@@ -503,7 +574,8 @@
     $('#ceiling').addEventListener('change', (e) => viewer.setCeiling(e.target.checked));
     render();
     aplicarAgenda(); setInterval(aplicarAgenda, 30000);
-    if (live) { setInterval(async () => { await refreshSistemas(); if (tab !== 'reuniao' && !document.activeElement.closest('#card')) render(); }, 6000); pollReuniao(); }
+    if (live) { await refreshRotinas(); if (rotinaRodando) acompanharRotina(); render(); }
+    if (live) { setInterval(async () => { await refreshSistemas(); await refreshRotinas(); if (tab !== 'reuniao' && !document.activeElement.closest('#card')) render(); }, 6000); pollReuniao(); }
   }
   function showConn() {
     const c = $('#conn');

@@ -1,0 +1,78 @@
+{
+  "_leia": "Rotinas dos agentes. Na primeira vez que o escritório sobe, este arquivo é copiado para data/rotinas.json, e é esse que vale. Edite pela ficha do agente no escritório 3D. dias: 0 = domingo ... 6 = sábado. Cada execução consome a cota do plano Claude.",
+  "rotinas": [
+    {
+      "id": "r-01-alertas",
+      "sistema": "vex-diretor-operacoes",
+      "dias": [
+        6
+      ],
+      "hora": "08:00",
+      "comando": "CONSOLIDAR ALERTAS",
+      "ativo": true
+    },
+    {
+      "id": "r-02-restricoes",
+      "sistema": "vex-planejamento-obras",
+      "dias": [
+        1,
+        3,
+        5
+      ],
+      "hora": "08:00",
+      "comando": "ANALISAR RESTRIÇÕES",
+      "ativo": true
+    },
+    {
+      "id": "r-03-rdos",
+      "sistema": "vex-controller-operacional",
+      "dias": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "hora": "07:30",
+      "comando": "AUDITAR RDOs",
+      "ativo": true
+    },
+    {
+      "id": "r-04-obras-do-dia",
+      "sistema": "vex-coordenador-obras",
+      "dias": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "hora": "08:30",
+      "comando": "REVISAR OBRAS DO DIA",
+      "ativo": true
+    },
+    {
+      "id": "r-05-risco-falta",
+      "sistema": "vex-suprimentos-compras",
+      "dias": [
+        1,
+        3,
+        5
+      ],
+      "hora": "08:00",
+      "comando": "IDENTIFICAR RISCO DE FALTA",
+      "ativo": true
+    },
+    {
+      "id": "r-06-orcado-realizado",
+      "sistema": "vex-financeiro-custos",
+      "dias": [
+        5
+      ],
+      "hora": "17:00",
+      "comando": "ANALISAR ORÇADO X REALIZADO",
+      "ativo": true
+    }
+  ]
+}
