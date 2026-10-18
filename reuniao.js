@@ -110,7 +110,7 @@ function perguntaAoAgente(pasta, prompt, papel, limiteMs, extras = []) {
     const args = ['-p', '--output-format', 'json',
                   '--permission-mode', 'plan',       // reunião é conversa, não obra
                   '--model', CFG().modelo || 'sonnet',                 // leve: reunião não pede o modelo mais caro
-                  '--max-turns', String(4), // no máximo N consultas ao projeto
+                  '--max-turns', String(CFG().maxTurnos || 6), // no máximo N consultas ao Sistema VEX
                   '--append-system-prompt', papel];
     for (const d of extras) args.push('--add-dir', d);
     args.push(...INTEGRACOES.argsDoAgente(pasta).args); // agente com Sistema VEX conectado consulta os dados na reunião
@@ -141,13 +141,14 @@ const PAPEL_REUNIAO = () => {
   const c = dep.config();
   return 'Você participa da reunião dos agentes' + (c.empresa ? ' de ' + c.empresa : '') + '. ' +
     'Responda em português do Brasil, curto e concreto. Nada de introdução, nada de "como IA". ' +
-    'Baseie o que disser nos dados REAIS do projeto em que você está: rode os scripts de diagnóstico, ' +
-    'leia os logs e o banco antes de afirmar número. Se não tiver o dado, diga "não tenho esse número" ' +
-    'em vez de estimar. Não altere nenhum arquivo: esta é uma reunião, não uma tarefa.';
+    'Baseie o que disser nos dados REAIS: consulte o Sistema VEX e as fontes conectadas (veja agente.json), ' +
+    'sua memória e suas entregas recentes antes de afirmar número. Diferencie fato de hipótese. Se não tiver o dado, ' +
+    'diga "não tenho esse número" em vez de estimar. Não altere nenhum arquivo: esta é uma reunião, não uma tarefa. ' +
+    'Os outros participantes são agentes do escritório; chame cada um pelo nome.';
 };
 
 function contexto(p) {
-  const foco = CFG().foco || 'o que cada um pode melhorar no próprio sistema nos próximos dias';
+  const foco = CFG().foco || 'os problemas da semana nas obras e as soluções entre as áreas';
   if (p.semMeta) return 'FOCO: ' + foco + '.';
   const ate = p.ate ? ' até ' + p.ate.split('-').reverse().join('/') : '';
   return `META: ${p.descricao ? p.descricao + ' — ' : ''}${p.alvo} ${p.unidade}${ate}.\n` +
@@ -193,11 +194,11 @@ async function rodar(equipe, opcoes = {}) {
     if (estado.cancelar || sobra() < 45000) break;
     const prompt =
       `${ctx}\n\n` +
-      `Você é ${ag.nome} (${ag.papel}), responsável por este projeto.\n\n` +
-      `Consulte o projeto no máximo duas vezes. Responda em até 6 linhas, nesta ordem:\n` +
-      `1. O número que você controla hoje (dado real do projeto; se não houver, diga).\n` +
-      `2. A MELHORIA no seu próprio sistema que mais ajudaria na meta — uma só.\n` +
-      `3. O que você precisa de outro agente ou do dono para isso (diga de quem).`;
+      `REUNIÃO SEMANAL DOS AGENTES — RODADA 1. Participam: ${dentro.map(x => x.nome + ' (' + x.papel + ')').join(', ')}.\n\n` +
+      `Você é ${ag.nome} (${ag.papel}). Consulte o Sistema VEX (no máximo 3 consultas) e responda em até 10 linhas, nesta ordem:\n` +
+      `1. Os 3 problemas mais importantes da sua área nesta semana, cada um com número e obra.\n` +
+      `2. A causa de cada um — diga se é fato ou hipótese.\n` +
+      `3. O que você precisa de outro agente para resolver (diga o nome de quem e o quê).`;
     const r = await perguntaAoAgente(ag.pasta, prompt, PAPEL_REUNIAO(), Math.min(sobra(), 5 * 60000), ag.extras);
     estado.custo += r.custo;
     fala(ag.nome, ag.papel, r.texto, 1, r.erro);
@@ -208,7 +209,7 @@ async function rodar(equipe, opcoes = {}) {
     .map(f => `### ${f.quem} (${f.papel})\n${f.texto}`).join('\n\n');
 
   // rodada 2 desligada por decisão do dono (economia de cota); liga só se pedirem
-  if (opcoes.rodada2 === true && resumo1 && !estado.cancelar && sobra() > 60000) {
+  if ((opcoes.rodada2 === true || CFG().rodada2 === true) && resumo1 && !estado.cancelar && sobra() > 60000) {
     estado.fase = 'rodada 2'; gravarAta();
     for (const ag of dentro) {
       if (estado.cancelar || sobra() < 45000) break;
@@ -216,11 +217,11 @@ async function rodar(equipe, opcoes = {}) {
         .map(f => `### ${f.quem}\n${f.texto}`).join('\n\n');
       if (!outros) continue;
       const prompt =
-        `${ctx}\n\nNa primeira rodada, os outros times disseram:\n\n${outros}\n\n` +
-        `Você é ${ag.nome}. Em no máximo 8 linhas:\n` +
-        `1. O que muda no SEU plano depois de ler isso.\n` +
-        `2. Onde você se encaixa com outro time (diga o nome de quem).\n` +
-        `3. Com o que você se compromete ESTA SEMANA, com número.`;
+        `${ctx}\n\nREUNIÃO SEMANAL — RODADA 2. Na primeira rodada, os outros agentes disseram:\n\n${outros}\n\n` +
+        `Você é ${ag.nome} (${ag.papel}). Agora converse com eles. Em no máximo 10 linhas:\n` +
+        `1. Soluções concretas que VOCÊ pode dar para os problemas dos outros (cite o nome de quem levantou).\n` +
+        `2. Onde você discorda ou vê risco no que foi dito, com o motivo.\n` +
+        `3. Seu compromisso para a próxima semana: ação, prazo e critério de conclusão.`;
       const r = await perguntaAoAgente(ag.pasta, prompt, PAPEL_REUNIAO(), Math.min(sobra(), 4 * 60000), ag.extras);
       estado.custo += r.custo;
       fala(ag.nome, ag.papel, r.texto, 2, r.erro);
@@ -235,16 +236,24 @@ async function rodar(equipe, opcoes = {}) {
   if (tudo && !estado.cancelar) {
     const prompt =
       `${ctx}\n\nEsta foi a reunião de hoje da equipe:\n\n${tudo}\n\n` +
-      `Escreva o BRIEFING DO DIA para o dono da empresa ler em 1 minuto. Formato:\n\n` +
-      `**ONDE ESTAMOS** — uma linha com o número e o ritmo necessário.\n` +
-      `**AS 3 AÇÕES DE HOJE** — três itens, cada um começando pelo nome do responsável, ` +
-      `com o que fazer e o número esperado. Escolha as três de maior impacto na meta, não as mais fáceis.\n` +
-      `**TRAVA** — a única coisa que, se não for resolvida, derruba a semana.\n` +
-      `**O DONO PRECISA DECIDIR** — o que depende dele e não dos agentes. Se não houver nada, escreva "nada hoje".\n\n` +
-      `Sem enrolação, sem repetir o que já está escrito acima. Se os times se contradisseram, aponte.`;
-    const r = await perguntaAoAgente(dep.ROOT, prompt, PAPEL_REUNIAO(), Math.min(sobra(), 5 * 60000));
+      `Você conduz o fechamento da reunião semanal como Diretor de Operações. Escreva a ATA para o dono ler em 2 minutos:\n\n` +
+      `**SITUAÇÃO DA SEMANA** — até 3 linhas, com os números que importam.\n` +
+      `**PLANO DA PRÓXIMA SEMANA** — até 6 itens: ação — responsável (nome do agente ou da pessoa) — prazo — critério de conclusão. ` +
+      `Escolha as de maior impacto em prazo, custo, qualidade e segurança, não as mais fáceis.\n` +
+      `**SOLUÇÕES COMBINADAS ENTRE OS AGENTES** — o que um vai fazer pelo outro.\n` +
+      `**TRAVAS** — o que, se não for resolvido, derruba a semana.\n` +
+      `**O DONO PRECISA DECIDIR** — o que depende dele. Se não houver nada, escreva "nada esta semana".\n\n` +
+      `Sem repetir o que já está escrito acima. Se os agentes se contradisseram, aponte. Não invente nada que não foi dito.` +
+      (dep.WHATS && dep.WHATS.ligado() ? `\n\nNo FINAL, um bloco para o grupo da equipe no WhatsApp, entre as linhas <<<WHATSAPP e WHATSAPP>>>: ` +
+        `até 15 linhas com o plano da semana (ação, responsável e prazo) e as decisões pendentes. Sem tabelas; use *negrito* do WhatsApp e "•" nas listas.` : '');
+    // quem fecha é o Diretor de Operações (agente 01), na pasta dele; sem ele, a pasta do escritório
+    const diretor = dentro.find(x => x.id === 'vex-diretor-operacoes');
+    const r = await perguntaAoAgente(diretor ? diretor.pasta : dep.ROOT, prompt, PAPEL_REUNIAO(), Math.min(sobra(), 5 * 60000), diretor ? diretor.extras : []);
     estado.custo += r.custo;
-    estado.briefing = r.texto;
+    // o bloco para o WhatsApp sai da ata que aparece na tela
+    const partes = dep.WHATS ? dep.WHATS.extrairBloco(r.texto || '') : { bloco: null, resto: r.texto };
+    estado.briefing = partes.resto || r.texto;
+    estado.briefingWhatsapp = partes.bloco;
     if (r.erro) estado.erro = r.erro;
   }
 
@@ -252,8 +261,28 @@ async function rodar(equipe, opcoes = {}) {
   estado.fase = estado.cancelar ? 'interrompida' : 'encerrada';
   estado.fim = Date.now();
   gravarAta();
+  if (estado.briefing) {
+    // a ata também fica nas entregas do Diretor de Operações e vai para o grupo
+    const diretor = dentro.find(x => x.id === 'vex-diretor-operacoes');
+    const corpo = { bloco: estado.briefingWhatsapp || null, resto: estado.briefing };
+    if (diretor) {
+      try {
+        fs.mkdirSync(path.join(diretor.pasta, 'entregas'), { recursive: true });
+        const falas = estado.falas.filter(f => f.texto).map(f => `### ${f.quem} — rodada ${f.rodada}\n\n${f.texto}`).join('\n\n');
+        fs.writeFileSync(path.join(diretor.pasta, 'entregas', estado.dia + '-reuniao-semanal.md'),
+          `# Reunião semanal dos agentes — ${estado.dia.split('-').reverse().join('/')}\n\n> Participantes: ${estado.participantes.map(p => p.nome).join(', ')} · ` +
+          `custo US$ ${estado.custo.toFixed(2)}\n\n${corpo.resto}\n\n---\n\n## O que cada agente disse\n\n${falas}\n`);
+      } catch (e) { /* a ata principal está em data/reunioes */ }
+    }
+    if (dep.WHATS && dep.WHATS.ligado() && !estado.cancelar) {
+      const msg = `🧭 *Reunião semanal dos agentes · ${estado.dia.split('-').reverse().join('/')}*\n` +
+        `_${estado.participantes.map(p => p.nome).join(', ')}_\n\n` + dep.WHATS.paraWhatsapp(corpo.bloco || corpo.resto);
+      const w = await dep.WHATS.enviar(msg, 'reuniao');
+      estado.whatsapp = w.ok ? 'enviado' : w.motivo; gravarAta();
+    }
+  }
   if (dep.avisar && estado.briefing)
-    dep.avisar('Reunião encerrada', 'O briefing de hoje está pronto na mesa de reunião do escritório.');
+    dep.avisar('Reunião encerrada', 'A ata da reunião está pronta na mesa de reunião do escritório.');
   return { ok: true };
 }
 

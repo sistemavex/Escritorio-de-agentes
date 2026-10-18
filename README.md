@@ -159,6 +159,23 @@ resultado da última execução.
   `data/rotinas.exemplo.json`.
 - Cada execução é uma chamada ao Claude e consome a cota do plano.
 
+## WhatsApp e reunião semanal
+
+**Resultados no grupo.** Com `whatsapp.ativo` em `data/config.json`, cada
+rotina termina com uma mensagem no grupo da equipe: emoji e nome do agente,
+comando e um resumo de até 10 linhas que o próprio agente escreve. O escritório
+manda um POST para um webhook do Make (cenário "ESCRITÓRIO VEX - AGENTES →
+WHATSAPP"), que repassa pela Z-API. O webhook e a chave ficam só no
+`data/config.json`; a chave precisa ser igual à do filtro do cenário. Teste:
+`POST /api/whatsapp/teste`.
+
+**Reunião semanal.** `reuniao` em `data/config.json`: sexta às 17h30, com os
+agentes marcados "participa da reunião" na ficha. Rodada 1: cada um traz os 3
+problemas da semana com dados do Sistema VEX. Rodada 2 (`rodada2: true`): cada
+um responde aos outros com soluções e compromissos. Fechamento: o Diretor de
+Operações (01) escreve a ata com o plano da semana, que fica nas entregas
+dele, na aba Reunião e no grupo do WhatsApp.
+
 ## Agenda
 
 `data/agenda.json` liga ou desliga um sistema numa data marcada. O exemplo está

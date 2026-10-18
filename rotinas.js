@@ -85,7 +85,10 @@ function executar(r, agendada, manual) {
       `Execute este comando conforme a sua missão e entregue no seu FORMATO padrão. Esta execução é automática e ninguém ` +
       `está acompanhando: não faça perguntas e não faça o onboarding. Use as fontes conectadas (veja agente.json), a sua ` +
       `memória e as entregas recentes. O que faltar vira a seção "dados pendentes". Comece com um resumo de até 3 linhas. ` +
-      `O escritório salva a sua resposta nas suas entregas; não tente gravar arquivos.`;
+      `O escritório salva a sua resposta nas suas entregas; não tente gravar arquivos.` +
+      (dep.WHATS && dep.WHATS.ligado() ?
+        `\n\nNo FINAL da resposta, escreva um bloco para o grupo da equipe no WhatsApp, entre as linhas <<<WHATSAPP e WHATSAPP>>>: ` +
+        `até 10 linhas, só os pontos principais com número e obra, e as ações com responsável. Sem tabelas; use *negrito* do WhatsApp e "•" nas listas.` : '');
     const args = ['-p', '--output-format', 'json', '--permission-mode', 'plan',
                   '--append-system-prompt', s.papel || ('Você é ' + nome + ', agente do escritório. Responda em português do Brasil.')];
     for (const d of s.compartilhar || []) args.push('--add-dir', d);
@@ -118,7 +121,8 @@ function executar(r, agendada, manual) {
           `# ${r.comando}\n\n> Rotina ${manual ? 'disparada manualmente' : 'automática'} · ${nome} · ${d.toLocaleString('pt-BR')}` +
           ` · ${textoDias(r.dias)} às ${r.hora} · custo US$ ${custo.toFixed(2)}\n\n${texto}\n`);
       } catch (e) { return resolve({ ok: false, erro: 'não consegui salvar a entrega: ' + e.message, custo }); }
-      resolve({ ok: !j.is_error, erro: j.is_error ? texto.slice(0, 300) : null, arquivo: nomeArq, custo, resumo: texto.slice(0, 400) });
+      resolve({ ok: !j.is_error, erro: j.is_error ? texto.slice(0, 300) : null, arquivo: nomeArq, custo, texto,
+                resumo: (dep.WHATS ? dep.WHATS.extrairBloco(texto).resto : texto).slice(0, 400) });
     });
   });
 }
@@ -135,7 +139,17 @@ async function rodar(id, agendada, manual) {
   console.log(`  ⏰ rotina: ${nome} → ${r.comando}${manual ? ' (manual)' : ''}`);
   let res;
   try { res = await executar(r, agendada, manual); } catch (e) { res = { ok: false, erro: String(e && e.message || e) }; }
-  const ultima = { agendada, quando: Date.now(), manual: !!manual, ok: res.ok, erro: res.erro || null, arquivo: res.arquivo || null, custo: res.custo || 0, resumo: res.resumo || null };
+  // resultado no grupo do WhatsApp (via Make)
+  let whatsapp = null;
+  if (res.ok && res.texto && dep.WHATS && dep.WHATS.ligado()) {
+    const s = dep.lerRegistro()[r.sistema] || {};
+    let emoji = null; try { emoji = JSON.parse(fs.readFileSync(path.join(s.pasta, 'agente.json'), 'utf8')).emoji; } catch (e) {}
+    const q = new Date(agendada);
+    const w = await dep.WHATS.enviar(dep.WHATS.mensagemRotina({ emoji, nome, comando: r.comando,
+      quando: `${DIAS[q.getDay()]} ${q.toLocaleDateString('pt-BR').slice(0, 5)} ${dois(q.getHours())}:${dois(q.getMinutes())}`, texto: res.texto }), 'rotinas');
+    whatsapp = w.ok ? 'enviado' : w.motivo;
+  }
+  const ultima = { agendada, quando: Date.now(), manual: !!manual, ok: res.ok, erro: res.erro || null, arquivo: res.arquivo || null, custo: res.custo || 0, resumo: res.resumo || null, whatsapp };
   marca((x, d) => {
     delete x.emCurso;
     x.ultima = ultima;

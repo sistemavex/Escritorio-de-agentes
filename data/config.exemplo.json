@@ -1,27 +1,37 @@
 {
   "_leia": "Na primeira vez que o escritório sobe, este arquivo é copiado para data/config.json, e é esse que vale. O config.json fica fora do git. Campo que faltar usa o padrão.",
-
   "nome": "Grupo VEX",
   "subtitulo": "escritório de agentes · um ecossistema, um padrão",
   "dono": "Thiago Siqueira",
   "empresa": "Grupo VEX, ecossistema de construção civil em Goiânia (GO): Sistema VEX (sistema de gerenciamento de obras, método, processos e indicadores), EAP Goiânia (planejamento e gerenciamento de obras), Vexor Engenharia (execução de obras, reformas e assistência técnica) e VEX View (inteligência visual para obras com drones e câmeras).",
   "porta": 4321,
-
   "reuniao": {
     "_leia": "automatica: false = só quando você clica em Reunir agora. Cada fala é uma chamada ao Claude e consome a cota do seu plano. dias: 0 = domingo ... 6 = sábado.",
-    "automatica": false,
-    "dias": [1, 5],
-    "hora": 11,
-    "minuto": 0,
-    "duracaoMin": 30,
+    "automatica": true,
+    "dias": [
+      5
+    ],
+    "hora": 17,
+    "minuto": 30,
+    "duracaoMin": 60,
     "modelo": "sonnet",
-    "foco": "o que cada agente pode melhorar no controle das obras esta semana: prazo, RDOs, restrições, compras e caixa",
+    "foco": "os problemas da semana nas obras (prazo, RDOs, restrições, compras e custos) e as soluções combinadas entre as áreas",
     "meta": {
       "descricao": "",
       "alvo": 0,
       "feito": 0,
       "unidade": "obras",
       "ate": ""
-    }
+    },
+    "rodada2": true,
+    "maxTurnos": 6
+  },
+  "whatsapp": {
+    "ativo": false,
+    "webhook": "",
+    "chave": "",
+    "rotinas": true,
+    "reuniao": true,
+    "_leia": "Webhook do cenário do Make que repassa ao grupo pela Z-API. A chave tem de ser igual à do filtro do cenário. Preencha no data/config.json, nunca aqui."
   }
 }

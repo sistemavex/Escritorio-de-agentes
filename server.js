@@ -544,12 +544,14 @@ const AVISOS = require('./avisos').init(ROOT, {
   resumo: async () => (await estado()).filter(x => x.estado === 'caiu')
     .map(x => (x.nome || x.id) + ' está fora do ar.')
 });
-const REUNIAO = require('./reuniao').init({ ROOT, lerRegistro, CLAUDE_BIN, config: lerConfig,
+/* resultados no grupo do WhatsApp, via webhook do Make — ver whatsapp.js */
+const WHATS = require('./whatsapp').criar(lerConfig);
+const REUNIAO = require('./reuniao').init({ ROOT, lerRegistro, CLAUDE_BIN, config: lerConfig, WHATS,
   avisar: (t, x, p) => AVISOS.avisar(t, x, p).catch(() => {}) });
 REUNIAO.agendar(equipeDoDisco);
 
 /* as rotinas diárias dos agentes — ver rotinas.js */
-const ROTINAS = require('./rotinas').init({ ROOT, lerRegistro, CLAUDE_BIN, INTEGRACOES,
+const ROTINAS = require('./rotinas').init({ ROOT, lerRegistro, CLAUDE_BIN, INTEGRACOES, WHATS,
   avisar: (t, x, p) => AVISOS.avisar(t, x, p).catch(() => {}),
   nomeDoAgente: (sis) => { const a = equipeDoDisco().find(a => a.sistema === sis); return a ? a.name : null; } });
 
@@ -772,6 +774,11 @@ const servidor = http.createServer(async (req, res) => {
   }
   if (rota === '/api/reuniao/parar' && req.method === 'POST') {
     return json(res, 200, REUNIAO.parar());
+  }
+
+  /* teste do WhatsApp: manda uma mensagem curta ao grupo */
+  if (rota === '/api/whatsapp/teste' && req.method === 'POST') {
+    return json(res, 200, await WHATS.enviar('🏢 *Escritório VEX*\nTeste de envio dos agentes para este grupo. Se você está lendo, está funcionando.', 'teste'));
   }
 
   /* rotinas: tarefas com dia e hora para cada agente */
