@@ -41,7 +41,7 @@
     <td class="n">${f2(r.area)}</td><td class="n">${(r.area / total * 100).toFixed(1).replace('.', ',')}%</td>
     <td>${r.cap || '—'}</td><td class="n">${PRI[r.id]}</td></tr>`).join('');
   $('#areas').innerHTML = `<thead><tr><th>Ambiente</th><th class="n">Área m²</th><th class="n">%</th><th>Capacidade</th><th class="n">Prioridade</th></tr></thead>
-    <tbody>${rows}<tr class="total"><td>Total interno</td><td class="n">${f2(total)}</td><td class="n">100%</td><td>23 postos fixos</td><td></td></tr></tbody>`;
+    <tbody>${rows}<tr class="total"><td>Total interno</td><td class="n">${f2(total)}</td><td class="n">100%</td><td>15 postos fixos</td><td></td></tr></tbody>`;
 
   /* amostras de material ------------------------------------------------- */
   const SW = [

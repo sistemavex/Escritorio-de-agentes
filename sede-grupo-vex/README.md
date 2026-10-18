@@ -4,7 +4,7 @@
 
 Proposta de arquitetura corporativa para a sede física do Grupo VEX, que reúne
 Sistema VEX, EAP Goiânia, Vexor Engenharia e VEX View. Cliente: Thiago Siqueira, CEO.
-Revisão 00, outubro de 2026.
+Revisão 01, outubro de 2026: divisórias internas em vidro (exceto sanitários), operações com uma única bancada de 8 postos e laje reduzida para 241,8 m².
 
 A planta baixa, a maquete e todas as perspectivas são geradas a partir de **um
 único modelo** (`js/model.js`). Por isso a planta e as imagens mostram sempre o
@@ -49,6 +49,16 @@ e abra **http://localhost:4321/sede**. A equipe é a mesma do escritório isomé
 (`data/equipe.json`), então os dois mostram as mesmas pessoas. No escritório isométrico
 há um botão **🏢 Sede 3D**.
 
+O cadastro segue o escritório base: situação (trabalhando, descanso, reunião, offline),
+estação, **horário de trabalho e dias** (fora do horário o agente vai descansar sozinho),
+sortear aparência, localizar, desligar da equipe, e **exportar, importar e restaurar** a equipe.
+No cadastro de agente: nome, função, emoji, o que faz, sistema (nenhum, roda nesta máquina com
+pasta, comando, argumentos e porta, ou site/URL com espelho) e se participa da reunião.
+
+Na primeira vez que o escritório sobe, `data/config.exemplo.json` vira `data/config.json` já com
+os dados do Grupo VEX: nome, subtítulo, dono (Thiago Siqueira), descrição da empresa e o foco da
+reunião. As vagas sugeridas para contratar são as mesmas nos dois escritórios.
+
 O link público (GitHub Pages) abre em **modo demonstração**: dá para contratar e mover
 agentes, mas ligar sistemas, conversar e reunir só funcionam com o servidor no seu computador.
 
@@ -71,13 +81,15 @@ agentes, mas ligar sistemas, conversar e reunir só funcionam com o servidor no 
 
 ## Premissas (a confirmar com o imóvel real)
 
-- Laje em edifício comercial em Goiânia, 20,00 × 13,00 m = **260 m² internos**.
+- Laje em edifício comercial em Goiânia, 18,60 × 13,00 m = **241,8 m² internos**.
 - Fachadas envidraçadas a norte e a leste, empena cega a oeste, núcleo do edifício ao sul.
-- Pilares 40 × 40 cm em malha de 10,00 × 6,50 m; laje aparente; pé-direito livre de 3,10 m.
-- 23 postos fixos: CEO 1, planejamento 1, jurídico 1, financeiro 3, operações 16, recepção 1.
+- Pilares 40 × 40 cm em malha de 9,30 × 6,50 m; laje aparente; pé-direito livre de 3,10 m.
+- Divisórias internas em vidro laminado com faixa jateada nas salas reservadas; só os sanitários têm paredes cheias.
+- 15 postos fixos: CEO 1, planejamento 1, jurídico 1, financeiro 3, operações 8 (uma bancada), recepção 1.
 
-**Dimensionamento:** o programa pedido não cabe em 180 m² sem cortes. Em 250 m²
-cabe no limite (14 postos em operações). A área recomendada é de **260 a 280 m²**.
+**Dimensionamento:** com operações em uma única bancada de 8 postos, todo o programa cabe em
+**241,8 m²**, dentro da faixa de 180 a 250 m² do briefing. Se operações crescer acima de 8 postos,
+a área volta para 260 a 280 m².
 
 ## Quadro de áreas
 
@@ -87,16 +99,16 @@ cabe no limite (14 postos em operações). A área recomendada é de **260 a 280
 | 02 | Jurídico | 8,96 | 1 posto + 2 lugares |
 | 03 | Planejamento (eng. de planejamento) | 8,96 | 1 posto |
 | 04 | Recepção | 31,36 | 1 posto + 2 espera |
-| 05 | Operações e Controle de Obras | 75,48 | 16 postos + daily |
-| 06 | Financeiro | 16,80 | 3 postos + mesa |
-| 07 | Copa | 14,28 | 5 lugares |
-| 08 | Galeria (circulação) | 21,60 | — |
-| 09 | Reunião | 22,14 | 11 lugares |
-| 10 | Apoio / TI | 5,74 | — |
+| 05 | Operações e Controle de Obras | 51,80 | 8 postos + daily |
+| 06 | Financeiro | 21,60 | 3 postos + mesa |
+| 07 | Copa e convivência | 22,80 | 8 lugares |
+| 08 | Galeria (circulação) | 19,50 | — |
+| 09 | Reunião | 20,50 | 9 lugares |
+| 10 | Apoio / TI | 4,92 | — |
 | 11 | WC feminino (acessível) | 6,97 | — |
 | 12 | WC masculino (acessível) | 6,97 | — |
-| 13 | Jogos e descompressão | 17,22 | 6 pessoas |
-| | **Total** | **260,00** | |
+| 13 | Jogos e descompressão | 13,94 | 5 pessoas |
+| | **Total** | **241,80** | |
 
 ## Sobre as logos
 

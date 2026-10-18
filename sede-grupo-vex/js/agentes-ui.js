@@ -9,7 +9,8 @@
   const $ = (s, el = document) => el.querySelector(s);
   const esc = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   const DEMO_KEY = 'vex-agentes-demo-v1';
-  const STATUS = { trabalhando: 'trabalhando', descanso: 'descansando', reuniao: 'em reunião', fora: 'fora' };
+  const STATUS = { trabalhando: 'trabalhando', descanso: 'descanso', reuniao: 'reunião', offline: 'offline' };
+  const STATUS_BTN = { trabalhando: '💻 Trabalhando', descanso: '🎮 Descanso', reuniao: '🗣️ Reunião', offline: '💤 Offline' };
 
   /* ------------------------------------------------------------ aparência (compatível com o escritório isométrico) */
   const SKIN = ['#f7d7bd', '#f0c29b', '#e0a878', '#c9854f', '#a2643b', '#7a4a2c', '#5a3620'];
@@ -28,6 +29,7 @@
 
   /* ------------------------------------------------------------ vagas sugeridas para o Grupo VEX */
   const CATALOG = [
+    { key: 'exemplo', name: 'EXEMPLO', role: 'Agente de demonstração', emoji: '🤖', sistema: 'exemplo', system: 'Agente de exemplo', desc: 'Um sistema mínimo que vem junto, na pasta exemplo-agente: sobe na porta 4401 e mostra uma página. Serve de molde para cadastrar os seus.' },
     { key: 'vex-controller', name: 'Otto', role: 'Controller de Obras', emoji: '🏗️', desc: 'Acompanha avanço físico, RDOs e restrições de cada obra e avisa o que saiu do plano.' },
     { key: 'vex-planejamento', name: 'Paula', role: 'Planejamento & Cronograma', emoji: '📅', desc: 'Mantém cronogramas, caminho crítico e o lookahead de seis semanas em dia.' },
     { key: 'vex-suprimentos', name: 'Sérgio', role: 'Suprimentos & Compras', emoji: '📦', desc: 'Cota, acompanha pedidos e aponta material com risco de faltar na obra.' },
@@ -41,6 +43,21 @@
     { key: 'vex-bi', name: 'Dora', role: 'Indicadores & BI', emoji: '📊', desc: 'Junta os números dos outros agentes e mostra o que mudou na semana.' },
   ];
 
+  // mesma aparência das vagas no escritório isométrico (js/roster.js)
+  const LOOKS = {
+    'vex-controller': { skin: '#e0a878', hair: '#241a13', style: 'curto', shirt: '#1f5e63', pants: '#1b2030', glasses: null, beard: 'cavanhaque' },
+    'vex-planejamento': { skin: '#f0c29b', hair: '#3d2a1a', style: 'longo', shirt: '#e9edf8', pants: '#26304a', glasses: 'retangular', beard: null },
+    'vex-suprimentos': { skin: '#a2643b', hair: '#140f0c', style: 'fade', shirt: '#334155', pants: '#1b2030', glasses: null, beard: null },
+    'vex-rdo': { skin: '#f7d7bd', hair: '#a8702f', style: 'coque', shirt: '#c8561a', pants: '#26304a', glasses: null, beard: null },
+    'vex-qualidade': { skin: '#c9854f', hair: '#1a120d', style: 'raspado', shirt: '#2b3d44', pants: '#3b3f52', glasses: null, beard: 'cheia' },
+    'vex-financeiro': { skin: '#7a4a2c', hair: '#140f0c', style: 'cacheado', shirt: '#1b2856', pants: '#1b2030', glasses: 'redondo', beard: null },
+    'vex-juridico': { skin: '#f0c29b', hair: '#8e8e93', style: 'curto', shirt: '#f2f2ef', pants: '#1e293b', glasses: 'retangular', beard: null },
+    'vex-comercial': { skin: '#e0a878', hair: '#6b4423', style: 'chanel', shirt: '#2f8f94', pants: '#26304a', glasses: null, beard: null },
+    'vex-marketing': { skin: '#f7d7bd', hair: '#241a13', style: 'rabo', shirt: '#c8561a', pants: '#1b2030', glasses: null, beard: null },
+    'vex-view': { skin: '#c9854f', hair: '#140f0c', style: 'curto', shirt: '#0f0f0f', pants: '#3b3f52', glasses: null, beard: 'cavanhaque' },
+    'vex-bi': { skin: '#f0c29b', hair: '#140f0c', style: 'longo', shirt: '#5b6b70', pants: '#1b2030', glasses: 'redondo', beard: null }
+  };
+
   /* ------------------------------------------------------------ estado */
   let live = false, team = [], sistemas = [], claude = null, selected = null, world = null, viewer = null, reuniao = null, tab = 'equipe';
   const sys = (id) => sistemas.find(s => s.id === id) || null;
@@ -53,8 +70,8 @@
       look: { skin: '#d9a17a', hair: '#2a1d14', style: 'curto', shirt: '#334155', pants: '#1e293b', shoes: '#15181f', glasses: null, beard: null, tattoo: false, cap: false, uniforme: false } };
   }
   function fromCatalog(c, extra = {}) {
-    return Object.assign({ id: 'ag-' + c.key, key: c.key, name: c.name, role: c.role, emoji: c.emoji, system: null, sistema: null, path: null, brief: c.desc,
-      dept: 'servico', slotId: null, status: 'trabalhando', boss: false, locked: false, look: makeLook(c.key) }, extra);
+    return Object.assign({ id: 'ag-' + c.key, key: c.key, name: c.name, role: c.role, emoji: c.emoji, system: c.system || null, sistema: c.sistema || null, path: null, brief: c.desc, reuniao: true,
+      dept: 'servico', slotId: null, status: 'trabalhando', boss: false, locked: false, look: makeLook(c.key, LOOKS[c.key] || {}) }, extra);
   }
 
   /* ------------------------------------------------------------ persistência */
@@ -90,9 +107,40 @@
   const statusPill = (a) => `<span class="pill st-${a.status}">${STATUS[a.status] || a.status}</span>`;
   const demoNote = '<p class="notice">Modo demonstração: este link não está ligado ao seu computador. Para ligar sistemas, conversar com o Claude Code e reunir os agentes, abra pelo servidor do escritório (<b>npm start</b> e depois <b>http://localhost:4321/sede</b>).</p>';
 
+  /* ------------------------------------------------------------ horário de trabalho (mesma regra do escritório base) */
+  const emMin = (hhmm) => { const m = /^(\d{1,2}):(\d{2})$/.exec(String(hhmm || '')); return m ? (+m[1]) * 60 + (+m[2]) : null; };
+  function dentroDoHorario(h, d = new Date()) {
+    if (!h || !h.inicio || !h.fim) return null;
+    const dias = Array.isArray(h.dias) && h.dias.length ? h.dias : [0, 1, 2, 3, 4, 5, 6];
+    if (!dias.includes(d.getDay())) return false;
+    const i = emMin(h.inicio), f = emMin(h.fim); if (i == null || f == null) return null;
+    const agora = d.getHours() * 60 + d.getMinutes();
+    return i <= f ? (agora >= i && agora < f) : (agora >= i || agora < f);
+  }
+  function textoHorario(a) {
+    const h = a.horario; if (!h || !h.inicio || !h.fim) return 'sem horário · sempre em serviço';
+    const nomes = ['dom', 'seg', 'ter', 'qua', 'qui', 'sex', 'sáb'];
+    const dias = Array.isArray(h.dias) && h.dias.length ? h.dias : [0, 1, 2, 3, 4, 5, 6];
+    const quais = dias.length === 7 ? 'todo dia' : (dias.length === 5 && [1, 2, 3, 4, 5].every(d => dias.includes(d))) ? 'seg a sex' : dias.map(d => nomes[d]).join(', ');
+    return `${h.inicio} às ${h.fim} · ${quais}`;
+  }
+  function aplicarAgenda() {
+    let mudou = false;
+    for (const a of team) {
+      if (a.boss) continue;
+      const dentro = dentroDoHorario(a.horario);
+      if (dentro === null) { a._fase = null; continue; }
+      const fase = dentro ? 'trabalhando' : 'descanso';
+      if (a._fase === fase) continue;
+      a._fase = fase;
+      if (a.status !== fase && a.status !== 'offline') { a.status = fase; mudou = true; }
+    }
+    if (mudou) { save(); world.sync(team); render(); }
+  }
+
   /* ------------------------------------------------------------ ações de equipe */
   function setStatus(a, st) { a.status = st; save(); world.sync(team); render(); }
-  function setAll(st) { team.forEach(a => { if (!a.boss || st !== 'descanso') a.status = st; }); save(); world.sync(team); render(); }
+  function setAll(st) { team.forEach(a => { if (!a.boss) a.status = st; }); save(); world.sync(team); render(); }
   function hire(c, extra) {
     if (team.some(a => a.key === c.key)) return toast(c.name + ' já está na equipe.');
     const a = fromCatalog(c, extra); team.push(a); save(); world.sync(team, { walkIn: true }); select(a.id); toast(`${a.name} contratado. Está indo para a mesa.`);
@@ -108,55 +156,65 @@
   }
 
   /* ------------------------------------------------------------ cadastro (agente + sistema) */
+  function portaLivre() { const usadas = sistemas.map(s => s.porta).filter(Boolean); let p = 4401; while (usadas.includes(p)) p++; return p; }
   function cadastroForm(a) {
     const opts = sistemas.map(s => `<option value="${esc(s.id)}">${esc(s.nome)} · ${esc(s.tipo === 'web' ? 'site' : 'local')}</option>`).join('');
     const body = openDialog(a ? 'Ligar um sistema a ' + a.name : 'Cadastrar agente', `
       ${live ? '' : demoNote}
+      ${a ? '' : '<p class="muted">Ele entra pela recepção e vai até uma estação livre. Se ele tem um sistema, cadastre junto: o computador dele passa a abrir esse sistema aqui dentro.</p>'}
       <form id="f-cad" class="card" style="background:none;border:0;padding:0">
-        ${a ? '' : `<div class="grid2"><div class="field"><label for="f-nome">Nome</label><input id="f-nome" required maxlength="40" placeholder="Ex.: Otto"></div>
+        ${a ? '' : `<div class="grid2"><div class="field"><label for="f-nome">Nome</label><input id="f-nome" required maxlength="22" placeholder="ex.: Tati"></div>
         <div class="field"><label for="f-emoji">Emoji</label><input id="f-emoji" maxlength="4" value="🤖"></div></div>
-        <div class="field"><label for="f-funcao">Função</label><input id="f-funcao" required maxlength="60" placeholder="Ex.: Controller de Obras"></div>
-        <div class="field"><label for="f-desc">O que ele faz</label><textarea id="f-desc" maxlength="300" placeholder="Uma ou duas frases"></textarea></div>`}
-        <div class="field"><label for="f-tipo">Sistema que ele opera</label>
-          <select id="f-tipo">${a ? '' : '<option value="nenhum">Nenhum por enquanto</option>'}${opts ? '<option value="existente">Um sistema já cadastrado</option>' : ''}<option value="local">Novo: roda neste computador</option><option value="web">Novo: site / URL</option></select></div>
+        <div class="field"><label for="f-funcao">Função</label><input id="f-funcao" maxlength="48" placeholder="ex.: Controller de Obras"></div>
+        <div class="field"><label for="f-desc">O que ele faz</label><textarea id="f-desc" maxlength="300" placeholder="Uma frase sobre a função dele."></textarea></div>`}
+        <div class="field"><label for="f-tipo">Sistema do agente</label>
+          <select id="f-tipo">${a ? '' : '<option value="nenhum">Nenhum</option>'}${opts ? '<option value="existente">Um sistema já cadastrado</option>' : ''}<option value="local">Roda nesta máquina</option><option value="web">Site / URL</option></select></div>
         <div class="field" data-t="existente" hidden><label for="f-exist">Sistema</label><select id="f-exist">${opts}</select></div>
         <div data-t="local" hidden class="card" style="padding:12px">
-          <div class="field"><label for="f-pasta">Pasta do projeto (caminho completo)</label><input id="f-pasta" placeholder="C:\\Users\\Thiago\\projetos\\controller-obras"></div>
-          <div class="grid2"><div class="field"><label for="f-cmd">Comando</label><input id="f-cmd" placeholder="npm"></div><div class="field"><label for="f-args">Argumentos</label><input id="f-args" placeholder="run dev"></div></div>
-          <div class="grid2"><div class="field"><label for="f-porta">Porta</label><input id="f-porta" inputmode="numeric" placeholder="4402"></div><div class="field"><label for="f-abre">Página inicial</label><input id="f-abre" value="/"></div></div>
-          <p class="muted">O escritório sobe o sistema com a variável PORT igual à porta informada.</p>
+          <div class="field"><label for="f-pasta">Pasta do projeto</label><input id="f-pasta" placeholder="C:\\projetos\\meu-agente"></div>
+          <div class="grid2"><div class="field"><label for="f-cmd">Comando</label><input id="f-cmd" value="npm"></div><div class="field"><label for="f-args">Argumentos</label><input id="f-args" value="run dev"></div></div>
+          <div class="grid2"><div class="field"><label for="f-porta">Porta</label><input id="f-porta" type="number" min="1024" max="65535" value="${portaLivre()}"></div><div class="field"><label for="f-abre">Página inicial</label><input id="f-abre" value="/"></div></div>
+          <p class="muted">O escritório sobe o sistema com PORT igual à porta acima. Se o seu projeto escolhe a porta de outro jeito, ponha nos argumentos (ex.: <b>run dev -- --port 4402</b>).</p>
         </div>
         <div data-t="web" hidden class="card" style="padding:12px">
-          <div class="field"><label for="f-url">Endereço</label><input id="f-url" placeholder="https://…"></div>
-          <label class="row muted"><input type="checkbox" id="f-espelho"> O site recusa abrir dentro do escritório (usar espelho)</label>
+          <div class="field"><label for="f-url">Endereço</label><input id="f-url" placeholder="https://meu-sistema.com"></div>
+          <label class="row muted"><input type="checkbox" id="f-espelho"> O site recusa abrir dentro do escritório (usar o espelho)</label>
         </div>
+        ${a ? '' : '<label class="row muted"><input type="checkbox" id="f-reun" checked> Participa da reunião dos agentes</label>'}
         <p class="notice" id="f-erro" hidden></p>
-        <div class="row"><button class="btn primary" type="submit">${a ? 'Ligar sistema' : 'Contratar'}</button></div>
+        <div class="row"><button class="btn primary" type="submit">${a ? 'Ligar sistema' : 'Contratar'}</button><button class="btn" type="button" id="f-cancel">Cancelar</button></div>
       </form>`);
     const tipo = $('#f-tipo', body);
     const sync = () => body.querySelectorAll('[data-t]').forEach(el => { el.hidden = el.dataset.t !== tipo.value; });
     tipo.addEventListener('change', sync); sync();
+    $('#f-cancel', body).addEventListener('click', closeDialog);
     $('#f-cad', body).addEventListener('submit', async (e) => {
       e.preventDefault();
       const err = (m) => { const p = $('#f-erro', body); p.textContent = m; p.hidden = false; };
+      const name = a ? a.name : $('#f-nome', body).value.trim();
+      if (!name) return $('#f-nome', body).focus();
+      const brief = a ? (a.brief || '') : $('#f-desc', body).value.trim();
       let sistemaId = null;
       if (tipo.value === 'existente') sistemaId = $('#f-exist', body).value;
       if (tipo.value === 'local' || tipo.value === 'web') {
         if (!live) return err('No modo demonstração não dá para cadastrar sistema. Abra pelo servidor do escritório no seu computador.');
-        const nome = a ? 'Sistema de ' + a.name : ($('#f-nome', body).value.trim() ? 'Sistema de ' + $('#f-nome', body).value.trim() : '');
         const b = tipo.value === 'web'
-          ? { nome, tipo: 'web', url: $('#f-url', body).value.trim(), embutir: $('#f-espelho', body).checked ? 'espelho' : true }
-          : { nome, tipo: 'local', pasta: $('#f-pasta', body).value.trim(), comando: $('#f-cmd', body).value.trim(), args: $('#f-args', body).value.trim(), porta: Number($('#f-porta', body).value), abre: $('#f-abre', body).value.trim() || '/' };
-        if (!a) b.sobre = $('#f-desc', body).value.trim();
-        const r = await post('/api/sistemas', b);
+          ? { tipo: 'web', nome: name, url: $('#f-url', body).value.trim(), embutir: $('#f-espelho', body).checked ? 'espelho' : true, sobre: brief }
+          : { tipo: 'local', nome: name, pasta: $('#f-pasta', body).value.trim(), comando: $('#f-cmd', body).value.trim(), args: $('#f-args', body).value.trim(),
+              porta: Number($('#f-porta', body).value), abre: $('#f-abre', body).value.trim() || '/', sobre: brief };
+        const btn = body.querySelector('button[type=submit]'); btn.disabled = true;
+        const r = await post('/api/sistemas', b).catch(() => ({ ok: false, motivo: 'o escritório não respondeu' }));
+        btn.disabled = false;
         if (!r.ok) return err(r.motivo || 'não consegui cadastrar o sistema');
         sistemaId = r.id; await refreshSistemas();
       }
-      if (a) { a.sistema = sistemaId; a.system = (sys(sistemaId) || {}).nome || null; save(); closeDialog(); render(); toast('Sistema ligado a ' + a.name + '.'); return; }
+      const pasta = tipo.value === 'local' ? $('#f-pasta', body).value.trim() : null;
+      if (a) { a.sistema = sistemaId; a.system = (sys(sistemaId) || {}).nome || null; if (pasta) a.path = pasta; save(); closeDialog(); render(); toast('Sistema ligado a ' + a.name + '.'); return; }
       const key = 'custom-' + Date.now().toString(36);
-      const novo = { key, name: $('#f-nome', body).value.trim(), role: $('#f-funcao', body).value.trim(), emoji: $('#f-emoji', body).value.trim() || '🤖', desc: $('#f-desc', body).value.trim() };
+      const novo = { key, name: name.slice(0, 22), role: ($('#f-funcao', body).value.trim() || 'Função a definir').slice(0, 48), emoji: $('#f-emoji', body).value.trim() || '🤖', desc: brief };
       closeDialog();
-      hire(novo, { sistema: sistemaId, system: (sys(sistemaId) || {}).nome || null, custom: true, reuniao: true });
+      hire(novo, { sistema: sistemaId, system: (sys(sistemaId) || {}).nome || null, path: pasta, custom: true, reuniao: $('#f-reun', body).checked });
+      if (sistemaId) toast(`${novo.name} entrou no quadro. Clique nele para abrir o sistema.`);
     });
   }
 
@@ -229,23 +287,30 @@
     const stations = world.slots.work.filter(x => !x.spare && (x.id !== 'ceo' || a.boss));
     const options = stations.map(x => { const who = occ.get(x.id); const n = who && agent(who); return `<option value="${x.id}" ${a.slot3d === x.id ? 'selected' : ''} ${n ? 'disabled' : ''}>${esc(x.label)}${n ? ' · ' + esc(n.name) : ''}</option>`; }).join('');
     const isLocal = s && s.tipo !== 'web';
+    const dias = (a.horario && a.horario.dias) || [1, 2, 3, 4, 5];
     return `<div class="card" id="card">
       <div class="head"><div class="em">${esc(a.emoji || '🤖')}</div><div><h2>${esc(a.name)}</h2><p class="muted">${esc(a.role || '')}</p></div></div>
       ${a.brief ? `<p class="muted">${esc(a.brief)}</p>` : ''}
-      <div class="row">${['trabalhando', 'descanso', 'reuniao'].map(st => `<button class="btn" data-st="${st}" aria-pressed="${a.status === st}" ${a.boss && st === 'descanso' ? '' : ''}>${{ trabalhando: 'Trabalhar', descanso: 'Descansar', reuniao: 'Reunião' }[st]}</button>`).join('')}</div>
-      ${a.boss ? '<p class="muted">Mesa fixa: Sala do CEO.</p>' : `<div class="field"><label for="k-mesa">Mesa</label><select id="k-mesa"><option value="">Escolher automaticamente</option>${options}</select></div>`}
+      ${a.path ? `<p class="muted" style="font-family:var(--f-mono);font-size:11px">${esc(a.path)}</p>` : ''}
+      <h3>Situação</h3>
+      <div class="row">${Object.keys(STATUS_BTN).map(st => `<button class="btn" data-st="${st}" aria-pressed="${a.status === st}">${STATUS_BTN[st]}</button>`).join('')}</div>
+      ${a.boss ? '<p class="muted">Mesa fixa: Sala do CEO.</p>' : `<div class="field"><label for="k-mesa">Estação</label><select id="k-mesa"><option value="">Escolher automaticamente</option>${options}</select></div>
+      <h3>Horário de trabalho</h3>
+      <div class="row"><input type="time" id="k-h1" value="${esc((a.horario && a.horario.inicio) || '')}" class="btn"><input type="time" id="k-h2" value="${esc((a.horario && a.horario.fim) || '')}" class="btn"><button class="btn" id="k-hoff" title="Sem horário: trabalha sempre">✕ sem horário</button></div>
+      <div class="row" id="k-dias">${['D', 'S', 'T', 'Q', 'Q', 'S', 'S'].map((n, i) => `<button class="btn" data-d="${i}" aria-pressed="${dias.includes(i)}">${n}</button>`).join('')}</div>
+      <p class="muted">${esc(textoHorario(a))}. Fora do horário ele vai para a copa ou a sala de jogos sozinho; dentro, volta para a estação.</p>`}
       <h3>Sistema</h3>
       ${s ? `<div class="row">${sysPill(s)}<b>${esc(s.nome)}</b></div>
-        <div class="row">${isLocal ? (s.estado === 'no ar' ? '<button class="btn" data-a="desligar">Desligar</button>' : '<button class="btn primary" data-a="ligar">Ligar</button>') : ''}
-        <button class="btn" data-a="abrir">Abrir</button>${isLocal ? '<button class="btn" data-a="log">Log</button>' : ''}${s.pasta ? '<button class="btn primary" data-a="chat">💬 Conversar</button>' : ''}</div>
+        <div class="row">${isLocal ? (s.estado === 'no ar' ? '<button class="btn" data-a="desligar">Desligar sistema</button>' : '<button class="btn primary" data-a="ligar">Ligar sistema</button>') : ''}
+        <button class="btn" data-a="abrir">🖥️ Abrir o sistema</button>${isLocal ? '<button class="btn" data-a="log">Log</button>' : ''}${s.pasta ? '<button class="btn primary" data-a="chat">💬 Conversar</button>' : ''}</div>
         ${s.erro ? `<p class="notice">${esc(s.erro)}</p>` : ''}`
         : a.sistema ? `<p class="notice">O sistema "${esc(a.sistema)}" não está no registro deste computador.</p>` : `<p class="muted">Sem sistema ligado. ${live ? '' : '(modo demonstração)'}</p>`}
       ${a.boss ? '' : `<div class="row"><button class="btn" data-a="vincular">${s ? 'Trocar sistema' : 'Ligar um sistema'}</button>
         <label class="row muted"><input type="checkbox" id="k-reu" ${a.reuniao !== false ? 'checked' : ''}> participa da reunião</label></div>`}
       <h3>Ficha</h3>
-      <div class="grid2"><div class="field"><label for="k-nome">Nome</label><input id="k-nome" value="${esc(a.name)}" maxlength="40"></div><div class="field"><label for="k-emoji">Emoji</label><input id="k-emoji" value="${esc(a.emoji || '')}" maxlength="4"></div></div>
-      <div class="field"><label for="k-role">Função</label><input id="k-role" value="${esc(a.role || '')}" maxlength="60"></div>
-      ${a.locked ? '' : `<div class="row"><button class="btn danger" data-a="demitir">Tirar da equipe</button></div>`}
+      <div class="grid2"><div class="field"><label for="k-nome">Nome exibido</label><input id="k-nome" value="${esc(a.name)}" maxlength="22"></div><div class="field"><label for="k-emoji">Emoji</label><input id="k-emoji" value="${esc(a.emoji || '')}" maxlength="4"></div></div>
+      <div class="field"><label for="k-role">Função</label><input id="k-role" value="${esc(a.role || '')}" maxlength="48"></div>
+      <div class="row"><button class="btn" data-a="sortear">🎲 Sortear aparência</button><button class="btn" data-a="localizar">📍 Localizar</button>${a.locked ? '' : '<button class="btn danger" data-a="demitir">Desligar da equipe</button>'}</div>
     </div>`;
   }
   function bindCard(a) {
@@ -253,14 +318,28 @@
     c.querySelectorAll('[data-st]').forEach(b => b.addEventListener('click', () => setStatus(a, b.dataset.st)));
     const mesa = $('#k-mesa', c); if (mesa) mesa.addEventListener('change', () => { a.slot3d = mesa.value || null; if (a.status !== 'trabalhando') a.status = 'trabalhando'; save(); world.sync(team); render(); });
     const reu = $('#k-reu', c); if (reu) reu.addEventListener('change', () => { a.reuniao = reu.checked; save(); });
+    // horário de trabalho
+    const salvaHorario = () => {
+      const i = $('#k-h1', c).value, f = $('#k-h2', c).value;
+      const dias = [...c.querySelectorAll('#k-dias [data-d]')].filter(b => b.getAttribute('aria-pressed') === 'true').map(b => +b.dataset.d);
+      a.horario = (i && f && dias.length) ? { inicio: i, fim: f, dias } : null; a._fase = null;
+      save(); aplicarAgenda(); render();
+    };
+    if ($('#k-h1', c)) {
+      $('#k-h1', c).addEventListener('change', salvaHorario); $('#k-h2', c).addEventListener('change', salvaHorario);
+      $('#k-hoff', c).addEventListener('click', () => { $('#k-h1', c).value = ''; $('#k-h2', c).value = ''; salvaHorario(); });
+      c.querySelectorAll('#k-dias [data-d]').forEach(b => b.addEventListener('click', () => { b.setAttribute('aria-pressed', String(b.getAttribute('aria-pressed') !== 'true')); salvaHorario(); }));
+    }
     const upd = (id, field) => { const el = $(id, c); if (el) el.addEventListener('change', () => { a[field] = el.value.trim() || a[field]; save(); world.sync(team); world.bots.get(a.id) && world.bots.get(a.id).refreshTag(); renderList(); }); };
     upd('#k-nome', 'name'); upd('#k-emoji', 'emoji'); upd('#k-role', 'role');
     c.querySelectorAll('[data-a]').forEach(b => b.addEventListener('click', () => {
       const act = b.dataset.a;
+      if (act === 'sortear') { const keep = a.look && a.look.uniforme; a.look = makeLook(a.id + Math.random(), { uniforme: keep }); save(); world.rebuild(a.id, team); world.setSelected(a.id); return; }
+      if (act === 'localizar') { world.focusAgent(a.id); return; }
       if (!live && act !== 'demitir' && act !== 'vincular') return toast('Disponível só com o servidor do escritório no seu computador.');
       if (act === 'ligar') ligar(a); else if (act === 'desligar') desligar(a); else if (act === 'log') verLog(a);
       else if (act === 'abrir') abrirSistema(a); else if (act === 'chat') conversar(a); else if (act === 'vincular') cadastroForm(a);
-      else if (act === 'demitir') { if (b.dataset.confirm) fire(a); else { b.dataset.confirm = '1'; b.textContent = 'Confirmar: tirar ' + a.name; } }
+      else if (act === 'demitir') { if (b.dataset.confirm) fire(a); else { b.dataset.confirm = '1'; b.textContent = 'Confirmar: desligar ' + a.name; } }
     }));
   }
   function renderList() {
@@ -280,11 +359,34 @@
       ${a ? agentCard(a) : '<p class="muted">Clique num boneco no escritório ou num nome abaixo para abrir a ficha.</p>'}
       <div class="row" style="justify-content:space-between"><h3>Equipe · ${team.length}</h3><span class="muted">${n('trabalhando')} trabalhando · ${n('descanso')} descansando · ${n('reuniao')} em reunião</span></div>
       <div class="row"><button class="btn" id="all-work">Todos trabalhar</button><button class="btn" id="all-rest">Todos descansar</button><button class="btn primary" id="go-hire">+ Contratar</button></div>
-      <div class="list" id="lista"></div>`;
+      <div class="list" id="lista"></div>
+      <h3>Equipe salva</h3>
+      <div class="row"><button class="btn" id="eq-exp">⬇ Exportar equipe (.json)</button><button class="btn" id="eq-imp">⬆ Importar equipe</button><button class="btn danger" id="eq-reset">↺ Restaurar padrão</button></div>
+      <input type="file" id="eq-file" accept="application/json,.json" hidden>`;
     renderList();
     $('#all-work').addEventListener('click', () => setAll('trabalhando'));
     $('#all-rest').addEventListener('click', () => { setAll('descanso'); toast('Equipe liberada para a copa e a sala de jogos.'); });
     $('#go-hire').addEventListener('click', () => switchTab('contratar'));
+    $('#eq-exp').addEventListener('click', () => {
+      const blob = new Blob([JSON.stringify({ team, v: 1 }, null, 2)], { type: 'application/json' });
+      const el = document.createElement('a'); el.href = URL.createObjectURL(blob); el.download = 'equipe.json'; el.click();
+      setTimeout(() => URL.revokeObjectURL(el.href), 1000);
+    });
+    $('#eq-imp').addEventListener('click', () => $('#eq-file').click());
+    $('#eq-file').addEventListener('change', (e) => {
+      const f = e.target.files[0]; if (!f) return;
+      const r = new FileReader();
+      r.onload = () => {
+        try { const d = JSON.parse(r.result); if (!Array.isArray(d.team) || !d.team.length) throw 0; team = d.team; prepararEquipe(); save(); world.sync(team); selected = null; render(); toast('Equipe importada.'); }
+        catch (_) { toast('Arquivo inválido.'); }
+      };
+      r.readAsText(f);
+    });
+    const rs = $('#eq-reset');
+    rs.addEventListener('click', () => {
+      if (!rs.dataset.ok) { rs.dataset.ok = '1'; rs.textContent = 'Confirmar: voltar ao padrão'; return; }
+      team = padrao(); prepararEquipe(); save(); world.sync(team); selected = null; render(); toast('Equipe restaurada ao padrão.');
+    });
     if (a) bindCard(a);
   }
   function renderContratar() {
@@ -353,6 +455,22 @@
     if (tab === 'equipe') renderEquipe(); else if (tab === 'contratar') renderContratar(); else renderReuniao();
   }
 
+  /* ------------------------------------------------------------ equipe padrão */
+  // igual ao escritório base: o dono e o agente de exemplo; sem servidor, uma equipe de demonstração
+  function padrao() {
+    return live ? [boss(), fromCatalog(CATALOG[0])]
+                : [boss(), ...['vex-controller', 'vex-planejamento', 'vex-suprimentos', 'vex-financeiro', 'vex-juridico'].map(k => fromCatalog(CATALOG.find(c => c.key === k)))];
+  }
+  function prepararEquipe() {
+    if (!team.some(a => a.id === 'boss-1')) team.unshift(boss());
+    team.forEach(a => {
+      if (!a.look || !a.look.skin) a.look = makeLook(a.key || a.id);
+      if (a.status === 'fora') a.status = 'offline';
+      if (!STATUS[a.status]) a.status = 'trabalhando';
+      if (a.id === 'boss-1' && (a.name === 'Você' || !a.name)) a.name = donoNome();
+    });
+  }
+
   /* ------------------------------------------------------------ início */
   async function boot() {
     $('#logo').src = window.VEX_LOGOS['grupo-vex'];
@@ -364,12 +482,8 @@
       try { const d = JSON.parse(localStorage.getItem(DEMO_KEY) || 'null'); if (d && Array.isArray(d.team)) team = d.team; } catch (e) { /* sem storage */ }
       if (!team.length) team = [boss(), ...['vex-controller', 'vex-planejamento', 'vex-suprimentos', 'vex-financeiro', 'vex-juridico'].map(k => fromCatalog(CATALOG.find(c => c.key === k)))];
     }
-    if (!team.some(a => a.id === 'boss-1')) team.unshift(boss());
-    team.forEach(a => {
-      if (!a.look || !a.look.skin) a.look = makeLook(a.key || a.id);
-      if (!STATUS[a.status]) a.status = 'trabalhando';
-      if (a.id === 'boss-1' && (a.name === 'Você' || !a.name)) a.name = donoNome();
-    });
+    if (!team.length) team = padrao();
+    prepararEquipe();
     showConn();
 
     viewer = await window.VEX3D.mountViewer($('#c'));
@@ -385,6 +499,7 @@
     sel.addEventListener('change', () => { viewer.go(sel.value); $('#ceiling').checked = M.views.find(v => v.id === sel.value).ceiling !== false; });
     $('#ceiling').addEventListener('change', (e) => viewer.setCeiling(e.target.checked));
     render();
+    aplicarAgenda(); setInterval(aplicarAgenda, 30000);
     if (live) { setInterval(async () => { await refreshSistemas(); if (tab !== 'reuniao' && !document.activeElement.closest('#card')) render(); }, 6000); pollReuniao(); }
   }
   function showConn() {

@@ -10,8 +10,8 @@
   // Rótulos posicionados à mão para não colidir com o mobiliário.
   const LABEL = {
     ceo: [2.25, 0.42], juridico: [1.75, 6.98], planejamento: [4.15, 6.25], recepcao: [2.55, 11.25],
-    operacoes: [10.25, 0.42], financeiro: [17.65, 2.08], copa: [17.35, 5.2], galeria: [12.75, 8.62],
-    reuniao: [8.1, 12.6], apoio: [11.7, 11.25], wcf: [13.0, 10.45], wcm: [15.05, 10.1], jogos: [17.95, 12.72],
+    operacoes: [9.1, 0.42], financeiro: [14.7, 1.6], copa: [16.75, 7.0], galeria: [12.2, 8.62],
+    reuniao: [8.0, 12.6], apoio: [11.2, 11.25], wcf: [12.6, 10.45], wcm: [14.4, 10.1], jogos: [16.95, 12.74],
   };
   const SMALL = { apoio: 1, wcf: 1, wcm: 1, galeria: 1 };
 
@@ -143,6 +143,8 @@
           out += rect(o.x + 0.45, o.y + 0.2, 0.55, 0.4, 'fu-wood');
           break;
         case 'whiteboard': out += rect(o.x, o.y, o.w, 0.08, 'fu-d'); break;
+        case 'panel': out += rect(o.x, o.y, o.w, o.d, o.mat === 'ripado' || o.mat === 'oakPanel' ? 'fu-wood' : 'fu-concrete') + rect(o.x, o.y, o.w, o.d, 'fu-thin'); break;
+        case 'totem': out += rect(o.x, o.y, o.w, o.d, 'fu-d'); break;
         case 'fridge': out += rect(o.x, o.y, o.w, o.d, 'fu') + text(o.x + o.w / 2, o.y + o.d / 2 + 0.06, 'GEL', 'pl-tiny', 'text-anchor="middle"'); break;
         case 'tower': out += rect(o.x, o.y, o.w, o.d, 'fu') + text(o.x + o.w / 2, o.y + o.d / 2 + 0.06, 'MO', 'pl-tiny', 'text-anchor="middle"'); break;
         case 'counter': {
@@ -205,7 +207,7 @@
       segs.forEach(([s0, s1]) => {
         const R = wallRect(w, s0, s1, w.t);
         if (w.type === 'glass' || w.type === 'fluted') {
-          out += rect(R.x, R.y, R.w, R.h, 'pl-glass');
+          out += rect(R.x, R.y, R.w, R.h, w.base ? 'pl-glass pl-glass-base' : 'pl-glass');
           if (w.axis === 'h') out += line(s0, w.c, s1, w.c, 'pl-glassline'); else out += line(w.c, s0, w.c, s1, 'pl-glassline');
         } else if (w.type === 'facade') {
           out += rect(R.x, R.y, R.w, R.h, 'pl-facade');
@@ -250,8 +252,8 @@
 
   function pathLen(pts) { let L = 0; for (let i = 1; i < pts.length; i++) L += Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1]); return L; }
   const ESCAPE = [
-    { from: 'Financeiro', pts: [[19.55, 0.55], [16.3, 0.7], [15.3, 0.7], [15.25, 5.5], [13.85, 6.6], [13.85, 8.15], [5.6, 8.15], [4.75, 9.7], [3.0, 11.6], [3.0, 13.2]] },
-    { from: 'Jogos', pts: [[19.55, 9.45], [16.45, 9.6], [16.45, 8.15], [5.6, 8.15], [4.75, 9.7], [3.0, 11.6], [3.0, 13.2]] },
+    { from: 'Financeiro', pts: [[18.2, 0.5], [13.1, 0.7], [12.15, 0.7], [11.95, 1.2], [11.95, 5.85], [10.5, 6.4], [10.5, 8.15], [5.6, 8.15], [4.75, 9.7], [3.0, 11.6], [3.0, 13.2]] },
+    { from: 'Jogos', pts: [[18.2, 9.45], [15.85, 9.55], [15.85, 8.15], [5.6, 8.15], [4.75, 9.7], [3.0, 11.6], [3.0, 13.2]] },
   ];
   ESCAPE.forEach(e => { e.len = pathLen(e.pts); });
 
@@ -261,6 +263,7 @@
   .pl-wall{fill:var(--pl-wall,#1d2124)} .pl-drywall{fill:var(--pl-wall2,#4a5154)} .pl-ext{fill:var(--pl-wall,#1d2124)}
   .pl-glass{fill:var(--pl-glassfill,#cfe2e2);stroke:var(--pl-wall,#1d2124);stroke-width:0.012}
   .pl-glassline{stroke:var(--pl-petrol,#1f5e63);stroke-width:0.02;fill:none}
+  .pl-glass-base{fill:var(--pl-wall2,#4a5154)}
   .pl-facade{fill:var(--pl-glassfill,#cfe2e2);stroke:var(--pl-wall,#1d2124);stroke-width:0.015}
   .pl-mullion,.pl-col{fill:var(--pl-wall,#1d2124)} .pl-jamb{fill:var(--pl-wall,#1d2124)}
   .pl-door{stroke:var(--pl-ink,#1d2124);stroke-width:0.03;fill:none} .pl-door-glass{stroke:var(--pl-petrol,#1f5e63);stroke-width:0.03;fill:none}
@@ -324,18 +327,19 @@
 
   function svg(m, opt = {}) {
     const L = Object.assign({ furniture: true, dims: true, axes: true, notes: true, noise: false, escape: false, labels: true }, opt.layers || {});
-    const vb = [-3.1, -3.1, 26.4, 19.0];
+    const W = m.plate.w;
+    const vb = [-3.1, -3.1, W + 6.4, 19.0];
     let s = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${vb.join(' ')}" ${opt.id ? `id="${opt.id}"` : ''} role="img" aria-label="Planta baixa humanizada da sede do Grupo VEX">`;
     s += `<style>${STYLE}</style><defs>${DEFS}</defs>`;
     s += rect(vb[0], vb[1], vb[2], vb[3], 'pl-bg');
     // hall do edifício (fora da unidade)
-    s += rect(-0.2, 13.2, 20.3, 0.7, 'pl-hall');
+    s += rect(-0.2, 13.2, W + 0.3, 0.7, 'pl-hall');
     // pisos
     s += '<g id="lyr-floors">';
     m.rooms.forEach(r => { s += rect(r.x0, r.y0, r.x1 - r.x0, r.y1 - r.y0, 'pl-f-' + r.floor); });
     // régua VEX no piso da galeria: linha de cota com marcas a cada metro
-    s += line(5.8, 8.15, 19.9, 8.15, 'pl-regua');
-    for (let x = 6; x <= 19.9; x += 1) s += line(x, 8.15 - (x % 5 === 0 ? 0.14 : 0.07), x, 8.15 + (x % 5 === 0 ? 0.14 : 0.07), 'pl-regua-t');
+    s += line(5.8, 8.15, W - 0.1, 8.15, 'pl-regua');
+    for (let x = 6; x <= W - 0.1; x += 1) s += line(x, 8.15 - (x % 5 === 0 ? 0.14 : 0.07), x, 8.15 + (x % 5 === 0 ? 0.14 : 0.07), 'pl-regua-t');
     s += '</g>';
     if (L.noise) {
       s += '<g id="lyr-noise">';
@@ -347,21 +351,20 @@
     if (L.notes) {
       s += '<g id="lyr-notes">';
       // aplicações de marca (azul-petróleo) e telas (laranja)
-      s += line(2.35, 7.56, 3.65, 7.56, 'pl-brand') + line(0.07, 8.2, 0.07, 12.55, 'pl-brand') + line(15.66, 1.62, 15.66, 5.32, 'pl-screen');
-      s += line(4.55, 7.56, 5.27, 7.56, 'pl-screen') + line(10.86, 10.0, 10.86, 11.9, 'pl-screen');
-      s += line(5.8, 8.8, 9.62, 8.8, 'pl-brand');
-      s += text(3.0, 7.86, 'parede institucional · logo Grupo VEX', 'pl-note', 'text-anchor="middle"');
+      s += line(2.35, 7.67, 3.65, 7.67, 'pl-brand') + line(0.07, 8.2, 0.07, 12.55, 'pl-brand') + line(12.31, 1.62, 12.31, 5.32, 'pl-screen');
+      s += line(4.6, 7.67, 5.22, 7.67, 'pl-screen') + line(10.29, 10.0, 10.29, 11.9, 'pl-screen');
+      s += line(5.8, 8.78, 9.1, 8.78, 'pl-brand');
+      s += text(3.0, 7.95, 'painel institucional · logo Grupo VEX', 'pl-note', 'text-anchor="middle"');
       s += text(0.62, 10.4, 'parede do ecossistema · 4 marcas', 'pl-note', 'text-anchor="middle" transform="rotate(-90 0.62 10.4)"');
-      s += text(15.42, 3.47, 'painel central · 3×2 telas 55"', 'pl-note-o', 'text-anchor="middle" transform="rotate(90 15.42 3.47)"');
-      s += text(7.7, 8.66, 'galeria de obras', 'pl-note', 'text-anchor="middle"');
-      s += text(5.0, 7.86, 'totem', 'pl-note-o', 'text-anchor="middle"');
-      s += text(0.95, 7.15, 'porta oculta', 'pl-tiny', 'text-anchor="middle"');
+      s += text(12.05, 3.47, 'painel central · 3×2 telas 55"', 'pl-note-o', 'text-anchor="middle" transform="rotate(90 12.05 3.47)"');
+      s += text(7.4, 8.64, 'galeria de obras (quadros suspensos)', 'pl-note', 'text-anchor="middle"');
+      s += text(4.9, 7.95, 'totem', 'pl-note-o', 'text-anchor="middle"');
       s += text(6.7, 8.0, 'acesso controlado', 'pl-tiny');
-      s += text(19.75, 8.36, 'régua VEX no piso', 'pl-tiny', 'text-anchor="end"');
-      s += text(10, -0.35, 'FACHADA NORTE · VIDRO DE CONTROLE SOLAR + ROLÔ SCREEN', 'pl-tiny', 'text-anchor="middle"');
-      s += text(20.42, 6.5, 'FACHADA LESTE · VIDRO', 'pl-tiny', 'text-anchor="middle" transform="rotate(90 20.42 6.5)"');
+      s += text(W - 0.25, 8.36, 'régua VEX no piso', 'pl-tiny', 'text-anchor="end"');
+      s += text(W / 2, -0.35, 'FACHADA NORTE · VIDRO DE CONTROLE SOLAR + ROLÔ SCREEN', 'pl-tiny', 'text-anchor="middle"');
+      s += text(W + 0.42, 6.5, 'FACHADA LESTE · VIDRO', 'pl-tiny', 'text-anchor="middle" transform="rotate(90 ' + (W + 0.42) + ' 6.5)"');
       s += text(-0.42, 6.5, 'EMPENA CEGA', 'pl-tiny', 'text-anchor="middle" transform="rotate(-90 -0.42 6.5)"');
-      s += text(11.5, 13.68, 'HALL DO EDIFÍCIO · ELEVADORES / ESCADAS (FORA DA UNIDADE)', 'pl-tiny', 'text-anchor="middle"');
+      s += text(W / 2 + 1.5, 13.68, 'HALL DO EDIFÍCIO · ELEVADORES / ESCADAS (FORA DA UNIDADE)', 'pl-tiny', 'text-anchor="middle"');
       s += `<path d="M 3.0 14.1 L 3.0 13.35 M 2.85 13.55 L 3.0 13.35 L 3.15 13.55" stroke="var(--pl-ink,#1d2124)" stroke-width="0.035" fill="none"/>`;
       s += text(3.0, 14.32, 'ENTRADA', 'pl-dimtxt', 'text-anchor="middle"');
       s += '</g>';
@@ -392,26 +395,27 @@
     if (L.axes) {
       s += '<g id="lyr-axes">';
       m.axesX.forEach(a => { s += line(a.v, -2.45, a.v, 13.9, 'pl-axis') + `<circle cx="${a.v}" cy="-2.65" r="0.24" class="pl-bubble"/>` + text(a.v, -2.56, a.id, 'pl-bubtxt', 'text-anchor="middle"'); });
-      m.axesY.forEach(a => { s += line(-2.45, a.v, 21.9, a.v, 'pl-axis') + `<circle cx="-2.65" cy="${a.v}" r="0.24" class="pl-bubble"/>` + text(-2.65, a.v + 0.09, a.id, 'pl-bubtxt', 'text-anchor="middle"'); });
+      m.axesY.forEach(a => { s += line(-2.45, a.v, W + 1.9, a.v, 'pl-axis') + `<circle cx="-2.65" cy="${a.v}" r="0.24" class="pl-bubble"/>` + text(-2.65, a.v + 0.09, a.id, 'pl-bubtxt', 'text-anchor="middle"'); });
       s += '</g>';
     }
     if (L.dims) {
       s += '<g id="lyr-dims">';
-      s += dimChain([0, 5.6, 15.8, 20], -1.05, 'x', 1) + dimChain([0, 20], -1.7, 'x', 1);
+      s += dimChain([0, 5.6, 12.6, W], -1.05, 'x', 1) + dimChain([0, W], -1.7, 'x', 1);
       s += dimChain([0, 4.2, 7.4, 13], -1.05, 'y', 1) + dimChain([0, 13], -1.7, 'y', 1);
-      s += dimChain([0, 5.6, 11.0, 12.4, 14.1, 15.8, 20], 14.85, 'x', -1);
-      s += dimChain([0, 4.0, 7.4, 8.9, 13], 21.15, 'y', -1);
+      s += dimChain([0, 5.6, 10.6, 11.8, 13.5, 15.2, W], 14.85, 'x', -1);
+      s += dimChain([0, 3.6, 7.4, 8.9, 13], W + 1.15, 'y', -1);
       s += '</g>';
     }
     // norte, escala, título
-    s += `<g transform="translate(21.75 -2.35)"><circle r="0.42" class="pl-bubble"/><path d="M0 -0.36 L0.15 0.2 L0 0.1 L-0.15 0.2 Z" fill="var(--pl-ink,#1d2124)"/><text y="0.75" class="pl-bubtxt" text-anchor="middle">N</text></g>`;
+    s += `<g transform="translate(${W + 1.75} -2.35)"><circle r="0.42" class="pl-bubble"/><path d="M0 -0.36 L0.15 0.2 L0 0.1 L-0.15 0.2 Z" fill="var(--pl-ink,#1d2124)"/><text y="0.75" class="pl-bubtxt" text-anchor="middle">N</text></g>`;
     s += `<g transform="translate(0 15.55)">`;
     [[0, 1], [1, 2], [2, 3], [3, 4], [4, 5]].forEach(([a, b], i) => { s += rect(a, 0, b - a, 0.12, '', `fill="${i % 2 ? 'var(--pl-paper,#f4f4f1)' : 'var(--pl-ink,#1d2124)'}" stroke="var(--pl-ink,#1d2124)" stroke-width="0.012"`); });
     [0, 1, 2, 5].forEach(v => { s += text(v, 0.45, v + (v === 5 ? ' m' : ''), 'pl-sub', 'text-anchor="middle"'); });
     s += text(6.0, 0.13, 'ESCALA GRÁFICA', 'pl-sub');
     s += '</g>';
-    s += text(23.1, 15.72, 'SEDE GRUPO VEX · PLANTA BAIXA HUMANIZADA', 'pl-title', 'text-anchor="end"');
-    s += text(23.1, 16.05, 'estudo preliminar · 260,00 m² internos · rev. 00 · não é projeto executivo', 'pl-sub', 'text-anchor="end"');
+    const area = m.rooms.reduce((a, r) => a + r.area, 0);
+    s += text(W + 3.1, 15.72, 'SEDE GRUPO VEX · PLANTA BAIXA HUMANIZADA', 'pl-title', 'text-anchor="end"');
+    s += text(W + 3.1, 16.05, 'estudo preliminar · ' + f2(area) + ' m² internos · rev. 01 · não é projeto executivo', 'pl-sub', 'text-anchor="end"');
     s += '</svg>';
     return s;
   }

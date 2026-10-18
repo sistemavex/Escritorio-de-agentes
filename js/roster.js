@@ -12,7 +12,7 @@ const ROSTER = (() => {
      =========================================================== */
   const BOSSES = [
     {
-      id: 'boss-1', name: (window.ESCRITORIO && ESCRITORIO.dono) || 'Você', role: 'Dono · Diretoria',
+      id: 'boss-1', name: (window.ESCRITORIO && ESCRITORIO.dono) || 'Você', role: 'CEO · Grupo VEX',
       emoji: '⭐', boss: true, dept: 'diretoria', slotId: 'DIR-1',
       status: 'trabalhando', locked: true,
       source: 'Diretoria', sistema: null,
@@ -39,48 +39,50 @@ const ROSTER = (() => {
       why: 'Serve de molde. Clique no computador dele para ver o escritório ligar, embutir e conversar com um sistema. Depois cadastre os seus.',
       look: { skin: '#c9854f', hair: '#140f0c', style: 'cacheado', shirt: '#38bdf8', pants: '#26304a', glasses: null, beard: null }
     },
-    {
-      key: 'sdr', name: 'Léo', role: 'Prospecção & SDR', emoji: '🎯', cat: 'sugerido',
-      desc: 'Encontra clientes em potencial, qualifica e prepara a primeira abordagem.',
-      why: 'É o topo do funil: sem entrada de oportunidade nova, o resto da equipe fica sem trabalho.',
-      look: { skin: '#f0c29b', hair: '#241a13', style: 'fade', shirt: '#6366f1', pants: '#1b2030', glasses: null, beard: 'cavanhaque' }
-    },
-    {
-      key: 'atendimento', name: 'Bia', role: 'Atendimento & Suporte', emoji: '🎧', cat: 'sugerido',
-      desc: 'Responde dúvidas, resolve problemas e encaminha o que precisa de gente.',
-      why: 'Resposta rápida segura cliente. Um agente de primeira linha tira o volume repetitivo de você.',
-      look: { skin: '#7a4a2c', hair: '#140f0c', style: 'coque', shirt: '#14b8a6', pants: '#1b2030', glasses: 'redondo', beard: null }
-    },
-    {
-      key: 'conteudo', name: 'Nico', role: 'Conteúdo & Redes Sociais', emoji: '📱', cat: 'sugerido',
-      desc: 'Planeja o calendário, escreve legendas e acompanha o que funcionou.',
-      why: 'Constância nas redes custa tempo. Com pauta e rascunho prontos, você só aprova.',
-      look: { skin: '#e0a878', hair: '#5a3a22', style: 'longo', shirt: '#f472b6', pants: '#26304a', glasses: null, beard: null }
-    },
-    {
-      key: 'copy', name: 'Duda', role: 'Copywriter', emoji: '✍️', cat: 'sugerido',
-      desc: 'Escreve anúncios, páginas e e-mails e testa variações.',
-      why: 'Texto é o que converte. Ter variações prontas acelera qualquer teste.',
-      look: { skin: '#f7d7bd', hair: '#8b5a2b', style: 'curto', shirt: '#f59e0b', pants: '#1b2030', glasses: 'retangular', beard: null }
-    },
-    {
-      key: 'financeiro', name: 'Rafa', role: 'Financeiro', emoji: '🧾', cat: 'sugerido',
-      desc: 'Acompanha entradas, saídas e o caixa, e avisa quando algo foge do previsto.',
-      why: 'Número do caixa em dia evita surpresa e mostra o que dá para investir.',
-      look: { skin: '#c9854f', hair: '#1a120d', style: 'curto', shirt: '#22c55e', pants: '#26304a', glasses: 'retangular', beard: 'cheia' }
-    },
-    {
-      key: 'dados', name: 'Cami', role: 'Dados & Relatórios', emoji: '🧮', cat: 'sugerido',
-      desc: 'Junta os números dos outros sistemas num painel e explica o que mudou.',
-      why: 'Com vários agentes trabalhando, alguém precisa olhar o todo e dizer o que está funcionando.',
-      look: { skin: '#f0c29b', hair: '#140f0c', style: 'longo', shirt: '#8b5cf6', pants: '#1b2030', glasses: 'redondo', beard: null }
-    },
-    {
-      key: 'qa', name: 'Dan', role: 'QA de Sistemas', emoji: '🧪', cat: 'sugerido',
-      desc: 'Roda build, typecheck e teste antes de qualquer deploy dos outros agentes.',
-      why: 'Com vários agentes mexendo em código, alguém precisa ser o freio antes de subir para produção.',
-      look: { skin: '#f7d7bd', hair: '#8e8e93', style: 'curto', shirt: '#0ea5e9', pants: '#26304a', glasses: 'redondo', beard: null }
-    }
+    { key: 'vex-controller', name: 'Otto', role: 'Controller de Obras', emoji: '🏗️', cat: 'sugerido',
+      desc: 'Acompanha avanço físico, RDOs e restrições de cada obra e avisa o que saiu do plano.',
+      why: 'É quem enxerga a obra inteira todo dia: sem ele, atraso só aparece quando já custou caro.',
+      look: { skin: '#e0a878', hair: '#241a13', style: 'curto', shirt: '#1f5e63', pants: '#1b2030', glasses: null, beard: 'cavanhaque' } },
+    { key: 'vex-planejamento', name: 'Paula', role: 'Planejamento & Cronograma', emoji: '📅', cat: 'sugerido',
+      desc: 'Mantém cronogramas, caminho crítico e o lookahead de seis semanas em dia.',
+      why: 'Plano atualizado é o que deixa as outras áreas trabalharem antes do problema.',
+      look: { skin: '#f0c29b', hair: '#3d2a1a', style: 'longo', shirt: '#e9edf8', pants: '#26304a', glasses: 'retangular', beard: null } },
+    { key: 'vex-suprimentos', name: 'Sérgio', role: 'Suprimentos & Compras', emoji: '📦', cat: 'sugerido',
+      desc: 'Cota, acompanha pedidos e aponta material com risco de faltar na obra.',
+      why: 'Material que falta para a frente de serviço. Ele avisa antes.',
+      look: { skin: '#a2643b', hair: '#140f0c', style: 'fade', shirt: '#334155', pants: '#1b2030', glasses: null, beard: null } },
+    { key: 'vex-rdo', name: 'Lia', role: 'Diário de Obra (RDO)', emoji: '📋', cat: 'sugerido',
+      desc: 'Cobra e organiza os RDOs de cada canteiro e resume o dia.',
+      why: 'RDO em dia é registro, prova e indicador ao mesmo tempo.',
+      look: { skin: '#f7d7bd', hair: '#a8702f', style: 'coque', shirt: '#c8561a', pants: '#26304a', glasses: null, beard: null } },
+    { key: 'vex-qualidade', name: 'Caio', role: 'Qualidade & Segurança', emoji: '⛑️', cat: 'sugerido',
+      desc: 'Checklists, não conformidades e prazos de correção.',
+      why: 'Retrabalho e acidente são os custos que mais doem; ele mede os dois.',
+      look: { skin: '#c9854f', hair: '#1a120d', style: 'raspado', shirt: '#2b3d44', pants: '#3b3f52', glasses: null, beard: 'cheia' } },
+    { key: 'vex-financeiro', name: 'Rita', role: 'Financeiro', emoji: '🧾', cat: 'sugerido',
+      desc: 'Fluxo de caixa, medições e contas a pagar e a receber por obra.',
+      why: 'Caixa por obra mostra qual contrato sustenta o grupo.',
+      look: { skin: '#7a4a2c', hair: '#140f0c', style: 'cacheado', shirt: '#1b2856', pants: '#1b2030', glasses: 'redondo', beard: null } },
+    { key: 'vex-juridico', name: 'Júlio', role: 'Contratos & Jurídico', emoji: '⚖️', cat: 'sugerido',
+      desc: 'Prazos contratuais, aditivos e pendências jurídicas.',
+      why: 'Aditivo esquecido vira prejuízo; ele controla os prazos.',
+      look: { skin: '#f0c29b', hair: '#8e8e93', style: 'curto', shirt: '#f2f2ef', pants: '#1e293b', glasses: 'retangular', beard: null } },
+    { key: 'vex-comercial', name: 'Marta', role: 'Comercial & Propostas', emoji: '📈', cat: 'sugerido',
+      desc: 'Orçamentos, propostas e funil de novos clientes.',
+      why: 'Sem proposta saindo, a carteira de obras seca em poucos meses.',
+      look: { skin: '#e0a878', hair: '#6b4423', style: 'chanel', shirt: '#2f8f94', pants: '#26304a', glasses: null, beard: null } },
+    { key: 'vex-marketing', name: 'Nina', role: 'Marketing & Conteúdo', emoji: '📱', cat: 'sugerido',
+      desc: 'Calendário de redes, cases de obra e materiais da marca.',
+      why: 'Obra bem entregue que ninguém vê não gera a próxima.',
+      look: { skin: '#f7d7bd', hair: '#241a13', style: 'rabo', shirt: '#c8561a', pants: '#1b2030', glasses: null, beard: null } },
+    { key: 'vex-view', name: 'Vítor', role: 'VEX View · Imagens aéreas', emoji: '🛰️', cat: 'sugerido',
+      desc: 'Organiza voos de drone, imagens e relatórios visuais por obra.',
+      why: 'Imagem aérea mostra avanço que planilha não mostra.',
+      look: { skin: '#c9854f', hair: '#140f0c', style: 'curto', shirt: '#0f0f0f', pants: '#3b3f52', glasses: null, beard: 'cavanhaque' } },
+    { key: 'vex-bi', name: 'Dora', role: 'Indicadores & BI', emoji: '📊', cat: 'sugerido',
+      desc: 'Junta os números dos outros agentes e mostra o que mudou na semana.',
+      why: 'Com vários agentes trabalhando, alguém precisa olhar o todo.',
+      look: { skin: '#f0c29b', hair: '#140f0c', style: 'longo', shirt: '#5b6b70', pants: '#1b2030', glasses: 'redondo', beard: null } }
   ];
 
   /* ===========================================================

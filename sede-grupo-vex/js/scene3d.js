@@ -360,20 +360,21 @@
     g.font = `800 48px ${FONT_D}`; g.fillStyle = '#1d2124'; g.fillText(rest.join(' '), 130, 112);
     return mkTex(c);
   }
-  function supergraficoTex() {
-    const W = 2048, H = 1568, c = cnv(W, H), g = c.getContext('2d');
+  function supergraficoTex(larg = 4.05) {
+    const W = 2048, H = Math.round(2048 * M.H / larg), c = cnv(W, H), g = c.getContext('2d');
     g.fillStyle = '#2b2f31'; g.fillRect(0, 0, W, H);
-    const s = W / 4.05; // px por metro
+    const s = W / larg; // px por metro
+    const XA = 0.5, XB = larg / 2, XC = larg - 0.5;
     g.strokeStyle = 'rgba(217,96,31,0.9)'; g.lineWidth = 6; g.setLineDash([60, 18, 8, 18]);
-    [0.6, 2.0, 3.4].forEach(x => { g.beginPath(); g.moveTo(x * s, 0); g.lineTo(x * s, H); g.stroke(); });
+    [XA, XB, XC].forEach(x => { g.beginPath(); g.moveTo(x * s, 0); g.lineTo(x * s, H); g.stroke(); });
     [0.8, 2.3].forEach(y => { g.beginPath(); g.moveTo(0, y * s); g.lineTo(W, y * s); g.stroke(); });
     g.setLineDash([]);
     g.font = `700 70px ${FONT_M}`; g.textAlign = 'center';
-    [['A', 0.6], ['B', 2.0], ['C', 3.4]].forEach(([t, x]) => { g.fillStyle = '#2b2f31'; g.strokeStyle = '#d9601f'; g.lineWidth = 6; g.beginPath(); g.arc(x * s, 0.32 * s, 70, 0, 7); g.fill(); g.stroke(); g.fillStyle = '#d9601f'; g.fillText(t, x * s, 0.32 * s + 24); });
+    [['A', XA], ['B', XB], ['C', XC]].forEach(([t, x]) => { g.fillStyle = '#2b2f31'; g.strokeStyle = '#d9601f'; g.lineWidth = 6; g.beginPath(); g.arc(x * s, 0.32 * s, 70, 0, 7); g.fill(); g.stroke(); g.fillStyle = '#d9601f'; g.fillText(t, x * s, 0.32 * s + 24); });
     // linha de cota
-    g.strokeStyle = '#e8e2da'; g.lineWidth = 4; g.beginPath(); g.moveTo(0.6 * s, 2.75 * s); g.lineTo(3.4 * s, 2.75 * s); g.stroke();
-    [0.6, 2.0, 3.4].forEach(x => { g.beginPath(); g.moveTo(x * s - 24, 2.75 * s + 24); g.lineTo(x * s + 24, 2.75 * s - 24); g.stroke(); g.beginPath(); g.moveTo(x * s, 2.75 * s - 50); g.lineTo(x * s, 2.75 * s + 30); g.stroke(); });
-    g.font = `600 56px ${FONT_M}`; g.fillStyle = '#e8e2da'; g.fillText('1,40', 1.3 * s, 2.75 * s - 26); g.fillText('1,40', 2.7 * s, 2.75 * s - 26);
+    g.strokeStyle = '#e8e2da'; g.lineWidth = 4; g.beginPath(); g.moveTo(XA * s, 2.75 * s); g.lineTo(XC * s, 2.75 * s); g.stroke();
+    [XA, XB, XC].forEach(x => { g.beginPath(); g.moveTo(x * s - 24, 2.75 * s + 24); g.lineTo(x * s + 24, 2.75 * s - 24); g.stroke(); g.beginPath(); g.moveTo(x * s, 2.75 * s - 50); g.lineTo(x * s, 2.75 * s + 30); g.stroke(); });
+    g.font = `600 56px ${FONT_M}`; g.fillStyle = '#e8e2da'; const cota = (XB - XA).toFixed(2).replace('.', ','); g.fillText(cota, (XA + XB) / 2 * s, 2.75 * s - 26); g.fillText(cota, (XB + XC) / 2 * s, 2.75 * s - 26);
     g.textAlign = 'left'; g.font = `800 96px ${FONT_D}`; g.fillStyle = '#e8e2da'; g.fillText('PAUSA', 0.75 * s, 1.75 * s);
     g.font = `500 44px ${FONT_M}`; g.fillStyle = '#d9601f'; g.fillText('também faz parte do método', 0.78 * s, 1.75 * s + 64);
     return mkTex(c);
@@ -398,6 +399,7 @@
       galv: std({ color: 0x9da3a6, roughness: 0.45, metalness: 0.75 }),
       glass: new THREE.MeshStandardMaterial({ color: 0xd8e6e5, transparent: true, opacity: 0.16, roughness: 0.04, metalness: 0.1, depthWrite: false, side: THREE.DoubleSide, envMapIntensity: 1.2 }),
       glassFacade: new THREE.MeshStandardMaterial({ color: 0xcfe0e0, transparent: true, opacity: 0.12, roughness: 0.03, metalness: 0.15, depthWrite: false, side: THREE.DoubleSide, envMapIntensity: 1.0 }),
+      frost: new THREE.MeshStandardMaterial({ color: 0xf4f6f6, transparent: true, opacity: 0.62, roughness: 0.9, depthWrite: false, side: THREE.DoubleSide }),
       shade: new THREE.MeshStandardMaterial({ color: 0x6d7375, map: TX.screenFabric, transparent: true, opacity: 0.62, roughness: 1, side: THREE.DoubleSide, depthWrite: false }),
       oak: std({ color: 0xe2d2c0, map: TX.oakPanel, roughness: 0.6 }),
       oakDark: std({ color: 0x9a7a62, map: TX.oakPanel, roughness: 0.6 }),
@@ -485,14 +487,15 @@
   function buildShell() {
     const H = M.H;
     // laje de piso (maquete) e hall do edifício
-    box(-0.6, -0.6, 20.6, 14.2, -0.35, -0.01, MAT.concreteObj);
-    floorPlane(-0.2, 13.2, 20.1, 14.2, 0.0, std({ color: 0x8e8b86, roughness: 0.8 }), [1, 1]);
+    const PW = M.plate.w;
+    box(-0.6, -0.6, PW + 0.6, 14.2, -0.35, -0.01, MAT.concreteObj);
+    floorPlane(-0.2, 13.2, PW + 0.1, 14.2, 0.0, std({ color: 0x8e8b86, roughness: 0.8 }), [1, 1]);
     // pisos por ambiente
     const fm = { concrete: [MAT.concreteFloor, [2, 2]], oak: [MAT.oakFloor, [1.8, 1.2]], carpet: [MAT.carpet, [0.5, 0.5]], porcelain: [MAT.porcelain, [0.6, 1.2]] };
     M.rooms.forEach(r => { const [mat, tile] = fm[r.floor]; floorPlane(r.x0, r.y0, r.x1, r.y1, 0.002, mat, tile); });
     // régua VEX no piso da galeria (linha de cota em aço preto com marcas a cada metro)
-    box(5.8, 8.14, 19.9, 8.16, 0.0, 0.006, MAT.steel);
-    for (let x = 6; x <= 19.9; x += 1) { const l = x % 5 === 0 ? 0.16 : 0.08; box(x - 0.008, 8.15 - l, x + 0.008, 8.15 + l, 0.0, 0.006, MAT.steel); }
+    box(5.8, 8.14, PW - 0.1, 8.16, 0.0, 0.006, MAT.steel);
+    for (let x = 6; x <= PW - 0.1; x += 1) { const l = x % 5 === 0 ? 0.16 : 0.08; box(x - 0.008, 8.15 - l, x + 0.008, 8.15 + l, 0.0, 0.006, MAT.steel); }
     // tetos
     M.rooms.forEach(r => {
       if (r.ceil === 'forro') ceilPlane(r.x0, r.y0, r.x1, r.y1, M.FORRO, MAT.forro);
@@ -514,7 +517,8 @@
     const glass = w.type === 'glass' || w.type === 'fluted';
     const mat = w.type === 'ext' ? MAT.wall : MAT.wall;
     segs.forEach(([s0, s1]) => {
-      if (glass) glassRun(w, s0, s1, 0, H);
+      if (glass && w.base) { wallBox(w, s0, s1, 0, w.base, mat); wallBox(w, s0, s1, 0, 0.06, MAT.skirting, w.t + 0.012); glassRun(w, s0, s1, w.base, H); }
+      else if (glass) glassRun(w, s0, s1, 0, H);
       else { wallBox(w, s0, s1, 0, H, mat); wallBox(w, s0, s1, 0, 0.06, MAT.skirting, w.t + 0.012); }
     });
     w.open.forEach(o => {
@@ -530,10 +534,12 @@
     const n = Math.max(1, Math.round((s1 - s0) / 1.2));
     for (let i = 0; i <= n; i++) { const s = s0 + (s1 - s0) * i / n; wallBox(w, s - 0.022, s + 0.022, z0, z1, MAT.steel, 0.05); }
     if (!transom && z1 - z0 > 2.5) wallBox(w, s0, s1, 2.1, 2.14, MAT.steel, 0.05);
+    // película jateada de privacidade (0,95 a 1,85 m) nas salas reservadas
+    if (w.frost && !transom) { const f = wallBox(w, s0, s1, Math.max(z0 + 0.05, 0.95), 1.85, MAT.frost, 0.016); f.castShadow = false; f.renderOrder = 3; }
   }
   function buildFacade(w) {
     const H = M.H;
-    const s0 = Math.max(w.a, 0), s1 = Math.min(w.b, w.axis === 'h' ? 20 : 13);
+    const s0 = Math.max(w.a, 0), s1 = Math.min(w.b, w.axis === 'h' ? M.plate.w : 13);
     const g = wallBox(w, s0, s1, 0.0, H, MAT.glassFacade, 0.014); g.castShadow = false; g.renderOrder = 2;
     wallBox(w, s0, s1, 0, 0.08, MAT.steel, 0.12); wallBox(w, s0, s1, H - 0.1, H, MAT.steel, 0.12);
     wallBox(w, s0, s1, 1.05, 1.1, MAT.steel, 0.08);
@@ -759,6 +765,15 @@
           box(o.x + 0.3, o.y + 0.5, o.x + 0.6, o.y + 0.52, 2.0, 2.02, MAT.lightLine);
           break;
         }
+        case 'panel': {
+          const pm = o.mat === 'concretePanel' ? MAT.concreteObj : (o.mat === 'ripado' || o.mat === 'oakPanel') ? MAT.oak : MAT.lacquer;
+          box(o.x, o.y, o.x + o.w, o.y + o.d, 0.02, o.h, pm);
+          // pés metálicos discretos
+          const ax = o.w > o.d;
+          [0.15, 0.85].forEach(f => { const cx = ax ? o.x + o.w * f : o.x + o.w / 2, cy = ax ? o.y + o.d / 2 : o.y + o.d * f; box(cx - (ax ? 0.04 : 0.25), cy - (ax ? 0.25 : 0.04), cx + (ax ? 0.04 : 0.25), cy + (ax ? 0.25 : 0.04), 0, 0.03, MAT.steel); });
+          break;
+        }
+        case 'totem': box(o.x, o.y, o.x + o.w, o.y + o.d, 0.04, o.h, MAT.steel); box(o.x - 0.05, o.y - 0.12, o.x + o.w + 0.05, o.y + o.d + 0.12, 0, 0.04, MAT.steel); break;
         case 'whiteboard': box(o.x, o.y, o.x + o.w, o.y + 0.03, 0.9, 1.9, MAT.white); box(o.x + 0.05, o.y - 0.15, o.x + 0.08, o.y + 0.2, 0, 1.9, MAT.alu); box(o.x + o.w - 0.08, o.y - 0.15, o.x + o.w - 0.05, o.y + 0.2, 0, 1.9, MAT.alu); break;
         case 'fridge': box(o.x, o.y, o.x + o.w, o.y + o.d, 0, 1.85, MAT.alu); box(o.x + o.w - 0.08, o.y + o.d + 0.002, o.x + o.w - 0.06, o.y + o.d + 0.03, 0.9, 1.5, MAT.steel); break;
         case 'tower': box(o.x, o.y, o.x + o.w, o.y + o.d, 0, 2.2, MAT.oak); box(o.x + 0.05, o.y + o.d, o.x + o.w - 0.05, o.y + o.d + 0.01, 1.1, 1.45, MAT.screenOff); box(o.x + 0.05, o.y + o.d, o.x + o.w - 0.05, o.y + o.d + 0.01, 0.55, 0.95, MAT.screenOff); break;
@@ -865,6 +880,11 @@
         wallPlane({ ...it, a0: it.a0 + inset, a1: it.a1 - inset, z0: it.z0 + inset, z1: it.z1 - inset }, basicTexMat(t, { color: 0xd8dddd }), { off: 0.036 });
       } else if (it.kind === 'frame') {
         wallPlane(it, MAT.steel, { depth: 0.03 });
+        if (it.hang) [it.a0 + 0.06, it.a1 - 0.06].forEach(a => {
+          const [nx, , nz] = FACE[it.face];
+          const px = it.face === 'S' || it.face === 'N' ? a : it.p + nx * 0.015, py = it.face === 'S' || it.face === 'N' ? it.p + nz * 0.015 : a;
+          const c = cyl(px, py, it.z1, M.H, 0.0025, MAT.steel, null, 6); c.castShadow = false;
+        });
         const t = it.content === 'planta' ? plan : frameTex(it.stage);
         wallPlane({ ...it, a0: it.a0 + 0.03, a1: it.a1 - 0.03, z0: it.z0 + 0.03, z1: it.z1 - 0.03 }, std({ map: t, roughness: 0.5, color: 0xffffff }), { off: 0.031 });
       } else if (it.kind === 'board') {
@@ -890,9 +910,9 @@
       if (Math.abs(x1 - x0) > Math.abs(y1 - y0)) m.rotation.z = Math.PI / 2; else m.rotation.x = Math.PI / 2;
       C.add(m); return m;
     };
-    duct(6.0, 0.9, 15.4, 0.9, H - 0.3, 0.17); duct(6.0, 7.95, 19.6, 7.95, H - 0.25, 0.13); duct(15.9, 11.2, 19.7, 11.2, H - 0.25, 0.13);
+    duct(6.0, 0.9, 12.2, 0.9, H - 0.3, 0.17); duct(6.0, 7.95, M.plate.w - 0.4, 7.95, H - 0.25, 0.13); duct(15.5, 11.2, M.plate.w - 0.3, 11.2, H - 0.25, 0.13);
     // eletrocalhas
-    box(6.0, 3.55, 15.25, 3.75, H - 0.2, H - 0.14, MAT.steel, C);
+    box(6.0, 3.55, 12.1, 3.75, H - 0.2, H - 0.14, MAT.steel, C);
     // baffles acústicos em feltro sobre as bancadas
     M.furniture.filter(o => o.t === 'bench').forEach(b => { for (let y = b.y + 0.45; y < b.y + b.d; y += 1.05) box(b.x - 0.1, y - 0.015, b.x + b.w + 0.1, y + 0.015, H - 0.5, H - 0.08, MAT.feltPetrol, C); });
     // nuvens acústicas na recepção e jogos
@@ -954,7 +974,7 @@
   function buildBackdrop() {
     const geo = new THREE.CylinderGeometry(70, 70, 90, 64, 1, true);
     const m = new THREE.Mesh(geo, new THREE.MeshBasicMaterial({ map: skylineTex(), side: THREE.BackSide, toneMapped: false, fog: false }));
-    m.position.set(10, -8, 6.5); groups.backdrop.add(m);
+    m.position.set(M.plate.w / 2, -8, 6.5); groups.backdrop.add(m);
   }
 
   /* ---------------------------------------------------------------- montagem */
@@ -969,7 +989,7 @@
     MAT.concretePanelMat = std({ color: 0xffffff, map: TX.concretePanel, roughness: 0.85 });
     MAT.oakPanelMat = std({ color: 0xffffff, map: TX.oakPanel, roughness: 0.6 });
     MAT.tileMat = std({ color: 0xffffff, map: TX.tile, roughness: 0.2 });
-    MAT.superMat = std({ map: supergraficoTex(), roughness: 0.85 });
+    const sg = M.wallItems.find(x => x.mat === 'supergrafico'); MAT.superMat = std({ map: supergraficoTex(sg ? sg.a1 - sg.a0 : 4.05), roughness: 0.85 });
     SCREENS = { totem: totemTex(), reuniao: slideTex(), ceo: ceoScreenTex(), tv: tvTex() };
     ['obras', 'cronograma', 'rdo', 'restricoes', 'suprimentos', 'produtividade'].forEach(k => { SCREENS[k] = dashboard(k); });
     for (let i = 0; i < 5; i++) SCREENS['m' + i] = monitorTex(i + 1);

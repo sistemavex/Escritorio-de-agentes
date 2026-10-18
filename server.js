@@ -36,6 +36,10 @@ function lerConfig() {
   r.reuniao.meta = Object.assign({}, CONFIG_PADRAO.reuniao.meta, (c.reuniao || {}).meta || {});
   return r;
 }
+// primeira vez: a configuração nasce do exemplo (Grupo VEX), como o registro de sistemas
+if (!fs.existsSync(CONFIG_ARQ)) {
+  try { fs.mkdirSync(path.dirname(CONFIG_ARQ), { recursive: true }); fs.copyFileSync(path.join(ROOT, 'data', 'config.exemplo.json'), CONFIG_ARQ); } catch (e) { /* segue com o padrão */ }
+}
 const PORT = Number(process.env.PORT) || Number(lerConfig().porta) || 4321;
 
 const REGISTRO = path.join(ROOT, 'data', 'sistemas.json');
