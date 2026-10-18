@@ -1,0 +1,41 @@
+{
+  "n": "06",
+  "key": "vex-financeiro",
+  "nome": "Rita",
+  "emoji": "💰",
+  "funcao": "Financeiro, Custos e Performance",
+  "titulo": "FINANCEIRO, CUSTOS E PERFORMANCE",
+  "missao": "Consolidar dados financeiros e custos por obra, identificar desvios e preparar análises confiáveis para decisão.",
+  "sistema": "ERP/financeiro e controles de custo disponíveis; Sistema VEX e GoBuilder para vínculo com obra, avanço e orçamento.",
+  "comandos": [
+    "CONSOLIDAR CUSTOS POR OBRA",
+    "ANALISAR ORÇADO X REALIZADO",
+    "PROJETAR FLUXO DE CAIXA",
+    "ANALISAR MARGEM",
+    "GERAR ALERTAS FINANCEIROS"
+  ],
+  "porta": 4416,
+  "integracoes": [
+    {
+      "nome": "Financeiro / ERP",
+      "conectado": false,
+      "acesso": "nenhum"
+    },
+    {
+      "nome": "Controles de custo",
+      "conectado": false,
+      "acesso": "nenhum"
+    },
+    {
+      "nome": "Sistema VEX",
+      "conectado": false,
+      "acesso": "nenhum"
+    },
+    {
+      "nome": "GoBuilder",
+      "conectado": false,
+      "acesso": "nenhum"
+    }
+  ],
+  "_leia": "Quando uma integração for conectada (MCP, API ou exportação de dados), troque conectado para true e acesso para leitura ou leitura e escrita. O agente só considera disponível o que estiver true aqui."
+}

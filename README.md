@@ -21,15 +21,49 @@ cd escritorio-de-agentes
 npm start
 ```
 
-Abra **http://localhost:4321**. Vem um agente de exemplo (pasta
-`exemplo-agente`): clique no computador dele e em **Ligar** para ver o fluxo
-completo.
+Abra **http://localhost:4321** (escritório isométrico) ou
+**http://localhost:4321/sede** (sede 3D do Grupo VEX). Os 9 agentes do Grupo
+VEX já vêm cadastrados e ligados. O agente de exemplo (pasta `exemplo-agente`)
+continua no registro como molde.
 
 No Windows:
 - **`INICIAR ESCRITORIO.cmd`** sobe o escritório e o religa se ele cair.
 - **`CRIAR ATALHO.ps1`** cria um atalho na área de trabalho. Para rodar: botão
   direito no arquivo e depois **Executar com o PowerShell**. O atalho liga o
   escritório, se estiver desligado, e abre o navegador.
+
+## Os 9 agentes do Grupo VEX
+
+Já vêm cadastrados e ligam sozinhos no primeiro minuto em que o escritório sobe.
+Cada um tem uma pasta em `agentes-vex/` com:
+
+- `CLAUDE.md`: o prompt completo do agente (missão, rotina, regras, formato e
+  primeira resposta) e as regras de operação no escritório. O Claude Code lê
+  esse arquivo em toda conversa e reunião.
+- `agente.json`: missão, sistema principal, comandos rápidos e a situação de
+  cada integração. Hoje todas estão `conectado: false`; troque para `true`
+  quando ligar o Sistema VEX, o GoBuilder ou outra fonte ao agente.
+- `server.js`: o painel do agente (porta 4411 a 4419), com a ficha, as
+  integrações, a memória, as entregas e as tarefas dele.
+- `memoria/` e `entregas/`: o que o agente aprende e entrega. Ficam fora do git.
+
+| Nº | Agente | Função | Porta |
+| --- | --- | --- | --- |
+| 01 | Heitor | Diretor de Operações e Portfólio | 4411 |
+| 02 | Paula | Planejamento e Controle de Obras | 4412 |
+| 03 | Otto | Controller Operacional | 4413 |
+| 04 | Caio | Coordenador de Obras | 4414 |
+| 05 | Sérgio | Suprimentos e Compras | 4415 |
+| 06 | Rita | Financeiro, Custos e Performance | 4416 |
+| 07 | Marta | Comercial, Propostas e Contratos | 4417 |
+| 08 | Nina | Marketing e Conteúdo | 4418 |
+| 09 | Bruna | Atendimento, Pós-obra e Assistência | 4419 |
+
+Em **💬 Conversar**, os cinco comandos rápidos do agente aparecem como
+botões. Use **Investigar** para ele só ler e responder, e **Resolver** para ele
+gravar a memória, as entregas e o quadro de tarefas entre agentes
+(`agentes-vex/compartilhado/`). Na primeira conversa cada agente se apresenta e
+faz o onboarding. Para mudar um agente, edite o `CLAUDE.md` e o `agente.json` da pasta dele.
 
 ## Colocar os seus agentes
 

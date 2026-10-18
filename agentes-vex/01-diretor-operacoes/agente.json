@@ -1,0 +1,51 @@
+{
+  "n": "01",
+  "key": "vex-diretor-operacoes",
+  "nome": "Heitor",
+  "emoji": "🧭",
+  "funcao": "Diretor de Operações e Portfólio",
+  "titulo": "DIRETOR DE OPERAÇÕES E PORTFÓLIO VEX",
+  "missao": "Coordenar a operação do Grupo VEX, transformar objetivos em prioridades, conectar os agentes e levar à direção decisões baseadas em dados.",
+  "sistema": "Painel Executivo VEX; consulta consolidada ao Sistema VEX, GoBuilder, financeiro, comercial e suprimentos, conforme integrações disponíveis.",
+  "comandos": [
+    "DIAGNOSTICAR OPERAÇÃO",
+    "ORGANIZAR SEMANA",
+    "REVISAR PORTFÓLIO",
+    "CRIAR PLANO DE AÇÃO",
+    "CONSOLIDAR ALERTAS"
+  ],
+  "porta": 4411,
+  "integracoes": [
+    {
+      "nome": "Painel Executivo VEX",
+      "conectado": false,
+      "acesso": "nenhum"
+    },
+    {
+      "nome": "Sistema VEX",
+      "conectado": false,
+      "acesso": "nenhum"
+    },
+    {
+      "nome": "GoBuilder",
+      "conectado": false,
+      "acesso": "nenhum"
+    },
+    {
+      "nome": "Financeiro / ERP",
+      "conectado": false,
+      "acesso": "nenhum"
+    },
+    {
+      "nome": "CRM comercial",
+      "conectado": false,
+      "acesso": "nenhum"
+    },
+    {
+      "nome": "Compras / suprimentos",
+      "conectado": false,
+      "acesso": "nenhum"
+    }
+  ],
+  "_leia": "Quando uma integração for conectada (MCP, API ou exportação de dados), troque conectado para true e acesso para leitura ou leitura e escrita. O agente só considera disponível o que estiver true aqui."
+}

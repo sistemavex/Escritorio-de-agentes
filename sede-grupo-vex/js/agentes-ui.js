@@ -8,7 +8,7 @@
   const M = window.VEX_MODEL;
   const $ = (s, el = document) => el.querySelector(s);
   const esc = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-  const DEMO_KEY = 'vex-agentes-demo-v1';
+  const DEMO_KEY = 'vex-agentes-demo-v2';
   const STATUS = { trabalhando: 'trabalhando', descanso: 'descanso', reuniao: 'reunião', offline: 'offline' };
   const STATUS_BTN = { trabalhando: '💻 Trabalhando', descanso: '🎮 Descanso', reuniao: '🗣️ Reunião', offline: '💤 Offline' };
 
@@ -27,26 +27,27 @@
       beard: (h % 4 === 0) ? 'cavanhaque' : null, tattoo: false, cap: false, uniforme: false }, hints);
   }
 
-  /* ------------------------------------------------------------ vagas sugeridas para o Grupo VEX */
+  /* ------------------------------------------------------------ os 9 agentes do Grupo VEX (pasta agentes-vex/) */
   const CATALOG = [
     { key: 'exemplo', name: 'EXEMPLO', role: 'Agente de demonstração', emoji: '🤖', sistema: 'exemplo', system: 'Agente de exemplo', desc: 'Um sistema mínimo que vem junto, na pasta exemplo-agente: sobe na porta 4401 e mostra uma página. Serve de molde para cadastrar os seus.' },
-    { key: 'vex-controller', name: 'Otto', role: 'Controller de Obras', emoji: '🏗️', desc: 'Acompanha avanço físico, RDOs e restrições de cada obra e avisa o que saiu do plano.' },
-    { key: 'vex-planejamento', name: 'Paula', role: 'Planejamento & Cronograma', emoji: '📅', desc: 'Mantém cronogramas, caminho crítico e o lookahead de seis semanas em dia.' },
-    { key: 'vex-suprimentos', name: 'Sérgio', role: 'Suprimentos & Compras', emoji: '📦', desc: 'Cota, acompanha pedidos e aponta material com risco de faltar na obra.' },
-    { key: 'vex-rdo', name: 'Lia', role: 'Diário de Obra (RDO)', emoji: '📋', desc: 'Cobra e organiza os RDOs de cada canteiro e resume o dia.' },
-    { key: 'vex-qualidade', name: 'Caio', role: 'Qualidade & Segurança', emoji: '⛑️', desc: 'Checklists, não conformidades e prazos de correção.' },
-    { key: 'vex-financeiro', name: 'Rita', role: 'Financeiro', emoji: '🧾', desc: 'Fluxo de caixa, medições e contas a pagar e a receber por obra.' },
-    { key: 'vex-juridico', name: 'Júlio', role: 'Contratos & Jurídico', emoji: '⚖️', desc: 'Prazos contratuais, aditivos e pendências jurídicas.' },
-    { key: 'vex-comercial', name: 'Marta', role: 'Comercial & Propostas', emoji: '📈', desc: 'Orçamentos, propostas e funil de novos clientes.' },
-    { key: 'vex-marketing', name: 'Nina', role: 'Marketing & Conteúdo', emoji: '📱', desc: 'Calendário de redes, cases de obra e materiais da marca.' },
-    { key: 'vex-view', name: 'Vítor', role: 'VEX View · Imagens aéreas', emoji: '🛰️', desc: 'Organiza voos de drone, imagens e relatórios visuais por obra.' },
-    { key: 'vex-bi', name: 'Dora', role: 'Indicadores & BI', emoji: '📊', desc: 'Junta os números dos outros agentes e mostra o que mudou na semana.' },
+    { key: 'vex-diretor-operacoes', name: 'Heitor', role: 'Diretor de Operações e Portfólio', emoji: '🧭', sistema: 'vex-diretor-operacoes', system: '01 · Diretor de Operações e Portfólio', desc: 'Coordenar a operação do Grupo VEX, transformar objetivos em prioridades, conectar os agentes e levar à direção decisões baseadas em dados.' },
+    { key: 'vex-planejamento', name: 'Paula', role: 'Planejamento e Controle de Obras', emoji: '📅', sistema: 'vex-planejamento-obras', system: '02 · Planejamento e Controle de Obras', desc: 'Manter cronogramas e restrições atualizados, analisar desvios e transformar o planejamento em ações executáveis.' },
+    { key: 'vex-controller', name: 'Otto', role: 'Controller Operacional', emoji: '🔎', sistema: 'vex-controller-operacional', system: '03 · Controller Operacional', desc: 'Auditar completude e consistência dos registros de obra, preparar lançamentos e cobrar correções sem inventar fatos de campo.' },
+    { key: 'vex-coordenador-obras', name: 'Caio', role: 'Coordenador de Obras', emoji: '🦺', sistema: 'vex-coordenador-obras', system: '04 · Coordenador de Obras', desc: 'Conduzir a resolução dos problemas operacionais de campo e garantir que cada impedimento tenha dono, prazo e evidência de conclusão.' },
+    { key: 'vex-suprimentos', name: 'Sérgio', role: 'Suprimentos e Compras', emoji: '📦', sistema: 'vex-suprimentos-compras', system: '05 · Suprimentos e Compras', desc: 'Conduzir o fluxo de suprimentos do pedido até a conferência do recebimento e o vínculo documental, monitorando prazos e divergências.' },
+    { key: 'vex-financeiro', name: 'Rita', role: 'Financeiro, Custos e Performance', emoji: '💰', sistema: 'vex-financeiro-custos', system: '06 · Financeiro, Custos e Performance', desc: 'Consolidar dados financeiros e custos por obra, identificar desvios e preparar análises confiáveis para decisão.' },
+    { key: 'vex-comercial', name: 'Marta', role: 'Comercial, Propostas e Contratos', emoji: '🤝', sistema: 'vex-comercial-contratos', system: '07 · Comercial, Propostas e Contratos', desc: 'Organizar prospecção, oportunidades, propostas e obrigações contratuais das empresas do grupo.' },
+    { key: 'vex-marketing', name: 'Nina', role: 'Marketing e Conteúdo', emoji: '📣', sistema: 'vex-marketing-conteudo', system: '08 · Marketing e Conteúdo', desc: 'Planejar e organizar comunicação e conteúdo de cada marca, gerando materiais coerentes com a estratégia e medindo resultados reais.' },
+    { key: 'vex-atendimento', name: 'Bruna', role: 'Atendimento, Pós-obra e Assistência', emoji: '🛠️', sistema: 'vex-atendimento-pos-obra', system: '09 · Atendimento, Pós-obra e Assistência', desc: 'Triar solicitações de clientes, organizar chamados e acompanhar a resolução com rastreabilidade até o encerramento.' }
   ];
 
   // mesma aparência das vagas no escritório isométrico (js/roster.js)
   const LOOKS = {
     'vex-controller': { skin: '#e0a878', hair: '#241a13', style: 'curto', shirt: '#1f5e63', pants: '#1b2030', glasses: null, beard: 'cavanhaque' },
     'vex-planejamento': { skin: '#f0c29b', hair: '#3d2a1a', style: 'longo', shirt: '#e9edf8', pants: '#26304a', glasses: 'retangular', beard: null },
+    'vex-diretor-operacoes': { skin: '#c9854f', hair: '#2a1d14', style: 'curto', shirt: '#1b2030', pants: '#1e293b', glasses: 'retangular', beard: 'cheia' },
+    'vex-coordenador-obras': { skin: '#c9854f', hair: '#1a120d', style: 'raspado', shirt: '#2b3d44', pants: '#3b3f52', glasses: null, beard: 'cheia' },
+    'vex-atendimento': { skin: '#e0a878', hair: '#3d2a1a', style: 'cacheado', shirt: '#2f8f94', pants: '#26304a', glasses: null, beard: null },
     'vex-suprimentos': { skin: '#a2643b', hair: '#140f0c', style: 'fade', shirt: '#334155', pants: '#1b2030', glasses: null, beard: null },
     'vex-rdo': { skin: '#f7d7bd', hair: '#a8702f', style: 'coque', shirt: '#c8561a', pants: '#26304a', glasses: null, beard: null },
     'vex-qualidade': { skin: '#c9854f', hair: '#1a120d', style: 'raspado', shirt: '#2b3d44', pants: '#3b3f52', glasses: null, beard: 'cheia' },
@@ -245,9 +246,10 @@
     if (!s || !s.pasta) return toast('A conversa precisa de um sistema local, com pasta de projeto.');
     let poll = null, alive = true;
     const body = openDialog('Conversar com ' + a.name, `
-      <p class="muted">O Claude Code abre dentro da pasta <b>${esc(s.pasta)}</b> e responde sobre o projeto.</p>
+      <p class="muted">O Claude Code abre dentro da pasta <b>${esc(s.pasta)}</b>${(s.comandos || []).length ? ', com o prompt completo do agente (CLAUDE.md) e a memória dele' : ' e responde sobre o projeto'}.</p>
       <div id="c-claude"></div>
       <div class="chatlog" id="c-log"></div>
+      ${(s.comandos || []).length ? `<div class="row" id="c-cmds" aria-label="Comandos rápidos">${s.comandos.map(c => `<button class="btn" data-cmd="${esc(c)}">${esc(c)}</button>`).join('')}</div>` : ''}
       <div class="field"><label for="c-txt">Pergunta</label><textarea id="c-txt" placeholder="Ex.: quais obras estão com RDO atrasado?"></textarea></div>
       <div class="row"><select id="c-modo" class="btn" aria-label="Modo"><option value="investigar">Investigar (só lê)</option><option value="resolver">Resolver (pode editar o projeto)</option></select>
       <button class="btn primary" id="c-env">Enviar</button><button class="btn" id="c-limpar">Nova conversa</button><span class="muted" id="c-st"></span></div>`, () => { alive = false; clearTimeout(poll); });
@@ -268,6 +270,7 @@
       if (r.ok === false) return toast(r.motivo || 'não consegui enviar');
       $('#c-txt', body).value = ''; load();
     });
+    body.querySelectorAll('[data-cmd]').forEach(x => x.addEventListener('click', () => { const t = $('#c-txt', body); t.value = x.dataset.cmd; t.focus(); }));
     $('#c-limpar', body).addEventListener('click', async () => { await post(`/api/agentes/${s.id}/limpar`); load(); });
     load();
   }
@@ -458,13 +461,13 @@
   /* ------------------------------------------------------------ equipe padrão */
   // igual ao escritório base: o dono e o agente de exemplo; sem servidor, uma equipe de demonstração
   function padrao() {
-    return live ? [boss(), fromCatalog(CATALOG[0])]
-                : [boss(), ...['vex-controller', 'vex-planejamento', 'vex-suprimentos', 'vex-financeiro', 'vex-juridico'].map(k => fromCatalog(CATALOG.find(c => c.key === k)))];
+    // os 9 agentes do Grupo VEX; com servidor, cada um ligado ao sistema dele (agentes-vex/NN-*)
+    return [boss(), ...CATALOG.filter(c => /^vex-/.test(c.key)).map(c => fromCatalog(c, live ? {} : { sistema: null, system: null }))];
   }
   function prepararEquipe() {
     if (!team.some(a => a.id === 'boss-1')) team.unshift(boss());
     team.forEach(a => {
-      if (!a.look || !a.look.skin) a.look = makeLook(a.key || a.id);
+      if (!a.look || !a.look.skin) a.look = makeLook(a.key || a.id, LOOKS[a.key] || {});
       if (a.status === 'fora') a.status = 'offline';
       if (!STATUS[a.status]) a.status = 'trabalhando';
       if (a.id === 'boss-1' && (a.name === 'Você' || !a.name)) a.name = donoNome();
@@ -480,7 +483,7 @@
       api('/api/claude').then(d => { claude = d; showConn(); }).catch(() => {});
     } else {
       try { const d = JSON.parse(localStorage.getItem(DEMO_KEY) || 'null'); if (d && Array.isArray(d.team)) team = d.team; } catch (e) { /* sem storage */ }
-      if (!team.length) team = [boss(), ...['vex-controller', 'vex-planejamento', 'vex-suprimentos', 'vex-financeiro', 'vex-juridico'].map(k => fromCatalog(CATALOG.find(c => c.key === k)))];
+      if (!team.length) team = padrao();
     }
     if (!team.length) team = padrao();
     prepararEquipe();

@@ -72,6 +72,9 @@ function lerRegistro() {
       if (id.startsWith('_')) continue;          // chaves de comentário
       // pasta relativa vale a partir da pasta do escritório (ex.: o agente de exemplo)
       if (s && s.pasta && !path.isAbsolute(s.pasta)) s.pasta = path.join(ROOT, s.pasta);
+      // pastas extras que o agente pode ler na conversa (ex.: a pasta compartilhada dos agentes VEX)
+      if (s && Array.isArray(s.compartilhar))
+        s.compartilhar = s.compartilhar.map(p => path.isAbsolute(p) ? p : path.join(ROOT, p)).filter(p => fs.existsSync(p));
       out[id] = s;
     }
     return out;
@@ -455,7 +458,7 @@ async function estado() {
     const p = vivos.get(id);
     const item = {
       id, nome: s.nome, tipo: s.tipo, sobre: s.sobre || '', dicas: s.dicas || [],
-      aviso: s.aviso || null,
+      aviso: s.aviso || null, comandos: s.comandos || [],
       // true = abre direto no quadro; "espelho" = passa pelo proxy local;
       // false = o navegador recusa mesmo, então o monitor manda abrir fora
       embutir: s.embutir === undefined ? true : s.embutir,
@@ -570,7 +573,8 @@ function perguntar(id, texto, modo) {
   // pela linha de comando, então não precisa de escape nenhum
   const args = ['-p', '--output-format', 'json',
                 '--permission-mode', modo === 'resolver' ? 'acceptEdits' : 'plan',
-                '--append-system-prompt', PAPEL];
+                '--append-system-prompt', s.papel || PAPEL];
+  for (const d of s.compartilhar || []) args.push('--add-dir', d);
   if (c.sessionId) args.push('--resume', c.sessionId);
 
   c.rodando = true; c.erro = null;
@@ -603,7 +607,7 @@ function perguntar(id, texto, modo) {
     if (j && j.session_id) c.sessionId = j.session_id;
     const resposta = j ? String(j.result || '') : (saida || erroSaida || '(sem resposta)');
 
-    if (/not logged in|please run \/login/i.test(resposta)) {
+    if (/not logged in|please run \/login|failed to authenticate|oauth session expired/i.test(resposta)) {
       c.precisaLogin = true;
       loginCache = { quando: 0, dados: null };
       c.erro = 'O Claude Code não está autenticado nesta máquina.';
@@ -929,6 +933,13 @@ async function vigiar() {
   } catch (e) { /* o vigia nunca derruba o escritório */ }
   vigiando = false;
 }
+/* primeira vez: os sistemas marcados com ligarAoIniciar (os agentes VEX) já nascem desejados,
+   então o vigia sobe todos no primeiro minuto sem ninguém clicar em Ligar */
+if (!fs.existsSync(DESEJADOS)) {
+  const d = new Set(Object.entries(lerRegistro()).filter(([, s]) => s && s.ligarAoIniciar && s.tipo === 'local').map(([id]) => id));
+  if (d.size) gravarDesejados(d);
+}
+setTimeout(vigiar, 3000);
 setInterval(vigiar, 60000);
 
 /* ===========================================================

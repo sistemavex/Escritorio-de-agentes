@@ -6,3 +6,10 @@ data/*.json
 !data/config.exemplo.json
 data/logs/
 data/reunioes/
+
+# memória, entregas e quadro dos agentes VEX: dados da empresa, ficam só nesta máquina
+agentes-vex/*/memoria/*
+!agentes-vex/*/memoria/.gitkeep
+agentes-vex/*/entregas/*
+!agentes-vex/*/entregas/.gitkeep
+agentes-vex/compartilhado/quadro-de-tarefas.md

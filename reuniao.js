@@ -98,19 +98,20 @@ function participantesDe(equipe) {
                  : !s.pasta ? 'sem pasta para investigar'
                  : !fs.existsSync(s.pasta) ? 'pasta não existe' : null;
     if (motivo) { fora.push({ nome: a.name, motivo }); continue; }
-    dentro.push({ id: a.sistema, nome: a.name, papel: a.role, pasta: s.pasta });
+    dentro.push({ id: a.sistema, nome: a.name, papel: a.role, pasta: s.pasta, extras: s.compartilhar || [] });
   }
   return { dentro, fora };
 }
 
 /* ---------------- falar com um agente ---------------- */
-function perguntaAoAgente(pasta, prompt, papel, limiteMs) {
+function perguntaAoAgente(pasta, prompt, papel, limiteMs, extras = []) {
   return new Promise(resolve => {
     const args = ['-p', '--output-format', 'json',
                   '--permission-mode', 'plan',       // reunião é conversa, não obra
                   '--model', CFG().modelo || 'sonnet',                 // leve: reunião não pede o modelo mais caro
                   '--max-turns', String(4), // no máximo N consultas ao projeto
                   '--append-system-prompt', papel];
+    for (const d of extras) args.push('--add-dir', d);
     const proc = spawn(dep.CLAUDE_BIN, args,
       { cwd: pasta, env: process.env, stdio: ['pipe', 'pipe', 'pipe'] });
 
@@ -195,7 +196,7 @@ async function rodar(equipe, opcoes = {}) {
       `1. O número que você controla hoje (dado real do projeto; se não houver, diga).\n` +
       `2. A MELHORIA no seu próprio sistema que mais ajudaria na meta — uma só.\n` +
       `3. O que você precisa de outro agente ou do dono para isso (diga de quem).`;
-    const r = await perguntaAoAgente(ag.pasta, prompt, PAPEL_REUNIAO(), Math.min(sobra(), 5 * 60000));
+    const r = await perguntaAoAgente(ag.pasta, prompt, PAPEL_REUNIAO(), Math.min(sobra(), 5 * 60000), ag.extras);
     estado.custo += r.custo;
     fala(ag.nome, ag.papel, r.texto, 1, r.erro);
   }
@@ -218,7 +219,7 @@ async function rodar(equipe, opcoes = {}) {
         `1. O que muda no SEU plano depois de ler isso.\n` +
         `2. Onde você se encaixa com outro time (diga o nome de quem).\n` +
         `3. Com o que você se compromete ESTA SEMANA, com número.`;
-      const r = await perguntaAoAgente(ag.pasta, prompt, PAPEL_REUNIAO(), Math.min(sobra(), 4 * 60000));
+      const r = await perguntaAoAgente(ag.pasta, prompt, PAPEL_REUNIAO(), Math.min(sobra(), 4 * 60000), ag.extras);
       estado.custo += r.custo;
       fala(ag.nome, ag.papel, r.texto, 2, r.erro);
     }

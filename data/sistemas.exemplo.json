@@ -13,8 +13,12 @@
     "tipo": "local",
     "pasta": "exemplo-agente",
     "comando": "node",
-    "args": ["server.js"],
-    "env": { "PORT": "4401" },
+    "args": [
+      "server.js"
+    ],
+    "env": {
+      "PORT": "4401"
+    },
     "porta": 4401,
     "abre": "/",
     "sobre": "Um sistema mínimo que vem junto com o escritório, para mostrar como ele liga, embute e conversa com um agente. Copie a pasta exemplo-agente como ponto de partida, ou cadastre o seu projeto pela tela.",
@@ -23,5 +27,320 @@
       "Em Conversar, o Claude Code abre dentro da pasta do sistema e responde sobre ele",
       "Para tirar o exemplo, apague a entrada \"exemplo\" deste arquivo e demita o agente"
     ]
+  },
+  "vex-diretor-operacoes": {
+    "nome": "01 · Diretor de Operações e Portfólio",
+    "tipo": "local",
+    "pasta": "agentes-vex/01-diretor-operacoes",
+    "comando": "node",
+    "args": [
+      "server.js"
+    ],
+    "env": {
+      "PORT": "4411"
+    },
+    "porta": 4411,
+    "abre": "/",
+    "compartilhar": [
+      "agentes-vex"
+    ],
+    "papel": "Você é o agente 01 — DIRETOR DE OPERAÇÕES E PORTFÓLIO VEX do Grupo VEX, dentro do escritório de agentes. Siga o CLAUDE.md desta pasta: ele tem o seu prompt completo, a sua memória e as regras de operação. Responda em português do Brasil.",
+    "sobre": "Coordenar a operação do Grupo VEX, transformar objetivos em prioridades, conectar os agentes e levar à direção decisões baseadas em dados.",
+    "dicas": [
+      "Sistema principal: Painel Executivo VEX; consulta consolidada ao Sistema VEX, GoBuilder, financeiro, comercial e suprimentos, conforme integrações disponíveis.",
+      "Comando: DIAGNOSTICAR OPERAÇÃO",
+      "Comando: ORGANIZAR SEMANA",
+      "Comando: REVISAR PORTFÓLIO",
+      "Comando: CRIAR PLANO DE AÇÃO",
+      "Comando: CONSOLIDAR ALERTAS"
+    ],
+    "comandos": [
+      "DIAGNOSTICAR OPERAÇÃO",
+      "ORGANIZAR SEMANA",
+      "REVISAR PORTFÓLIO",
+      "CRIAR PLANO DE AÇÃO",
+      "CONSOLIDAR ALERTAS"
+    ],
+    "ligarAoIniciar": true
+  },
+  "vex-planejamento-obras": {
+    "nome": "02 · Planejamento e Controle de Obras",
+    "tipo": "local",
+    "pasta": "agentes-vex/02-planejamento-obras",
+    "comando": "node",
+    "args": [
+      "server.js"
+    ],
+    "env": {
+      "PORT": "4412"
+    },
+    "porta": 4412,
+    "abre": "/",
+    "compartilhar": [
+      "agentes-vex"
+    ],
+    "papel": "Você é o agente 02 — PLANEJAMENTO E CONTROLE DE OBRAS do Grupo VEX, dentro do escritório de agentes. Siga o CLAUDE.md desta pasta: ele tem o seu prompt completo, a sua memória e as regras de operação. Responda em português do Brasil.",
+    "sobre": "Manter cronogramas e restrições atualizados, analisar desvios e transformar o planejamento em ações executáveis.",
+    "dicas": [
+      "Sistema principal: GoBuilder como ambiente de planejamento e acompanhamento, cruzado com Sistema VEX para registros operacionais, restrições e evidências.",
+      "Comando: ANALISAR CRONOGRAMA",
+      "Comando: ATUALIZAR AVANÇO",
+      "Comando: IDENTIFICAR CAMINHO CRÍTICO",
+      "Comando: ANALISAR RESTRIÇÕES",
+      "Comando: MONTAR PLANO DE RECUPERAÇÃO"
+    ],
+    "comandos": [
+      "ANALISAR CRONOGRAMA",
+      "ATUALIZAR AVANÇO",
+      "IDENTIFICAR CAMINHO CRÍTICO",
+      "ANALISAR RESTRIÇÕES",
+      "MONTAR PLANO DE RECUPERAÇÃO"
+    ],
+    "ligarAoIniciar": true
+  },
+  "vex-controller-operacional": {
+    "nome": "03 · Controller Operacional",
+    "tipo": "local",
+    "pasta": "agentes-vex/03-controller-operacional",
+    "comando": "node",
+    "args": [
+      "server.js"
+    ],
+    "env": {
+      "PORT": "4413"
+    },
+    "porta": 4413,
+    "abre": "/",
+    "compartilhar": [
+      "agentes-vex"
+    ],
+    "papel": "Você é o agente 03 — CONTROLLER OPERACIONAL VEX do Grupo VEX, dentro do escritório de agentes. Siga o CLAUDE.md desta pasta: ele tem o seu prompt completo, a sua memória e as regras de operação. Responda em português do Brasil.",
+    "sobre": "Auditar completude e consistência dos registros de obra, preparar lançamentos e cobrar correções sem inventar fatos de campo.",
+    "dicas": [
+      "Sistema principal: Sistema VEX como sistema principal; GoBuilder para cruzamento de atividades, datas e restrições.",
+      "Comando: AUDITAR RDOs",
+      "Comando: PREPARAR RDO",
+      "Comando: VERIFICAR PENDÊNCIAS",
+      "Comando: COBRAR REGISTROS",
+      "Comando: AUDITAR EVIDÊNCIAS"
+    ],
+    "comandos": [
+      "AUDITAR RDOs",
+      "PREPARAR RDO",
+      "VERIFICAR PENDÊNCIAS",
+      "COBRAR REGISTROS",
+      "AUDITAR EVIDÊNCIAS"
+    ],
+    "ligarAoIniciar": true
+  },
+  "vex-coordenador-obras": {
+    "nome": "04 · Coordenador de Obras",
+    "tipo": "local",
+    "pasta": "agentes-vex/04-coordenador-obras",
+    "comando": "node",
+    "args": [
+      "server.js"
+    ],
+    "env": {
+      "PORT": "4414"
+    },
+    "porta": 4414,
+    "abre": "/",
+    "compartilhar": [
+      "agentes-vex"
+    ],
+    "papel": "Você é o agente 04 — COORDENADOR DE OBRAS do Grupo VEX, dentro do escritório de agentes. Siga o CLAUDE.md desta pasta: ele tem o seu prompt completo, a sua memória e as regras de operação. Responda em português do Brasil.",
+    "sobre": "Conduzir a resolução dos problemas operacionais de campo e garantir que cada impedimento tenha dono, prazo e evidência de conclusão.",
+    "dicas": [
+      "Sistema principal: Sistema VEX para pendências, registros e ocorrências; GoBuilder para cronograma, atividades e restrições.",
+      "Comando: REVISAR OBRAS DO DIA",
+      "Comando: PRIORIZAR IMPEDIMENTOS",
+      "Comando: COBRAR PLANO DE AÇÃO",
+      "Comando: ESCALAR PENDÊNCIAS",
+      "Comando: ENCERRAR AÇÕES"
+    ],
+    "comandos": [
+      "REVISAR OBRAS DO DIA",
+      "PRIORIZAR IMPEDIMENTOS",
+      "COBRAR PLANO DE AÇÃO",
+      "ESCALAR PENDÊNCIAS",
+      "ENCERRAR AÇÕES"
+    ],
+    "ligarAoIniciar": true
+  },
+  "vex-suprimentos-compras": {
+    "nome": "05 · Suprimentos e Compras",
+    "tipo": "local",
+    "pasta": "agentes-vex/05-suprimentos-compras",
+    "comando": "node",
+    "args": [
+      "server.js"
+    ],
+    "env": {
+      "PORT": "4415"
+    },
+    "porta": 4415,
+    "abre": "/",
+    "compartilhar": [
+      "agentes-vex"
+    ],
+    "papel": "Você é o agente 05 — SUPRIMENTOS E COMPRAS do Grupo VEX, dentro do escritório de agentes. Siga o CLAUDE.md desta pasta: ele tem o seu prompt completo, a sua memória e as regras de operação. Responda em português do Brasil.",
+    "sobre": "Conduzir o fluxo de suprimentos do pedido até a conferência do recebimento e o vínculo documental, monitorando prazos e divergências.",
+    "dicas": [
+      "Sistema principal: Sistema VEX e/ou sistema de compras/ERP disponível; GoBuilder para datas de necessidade e impacto no cronograma.",
+      "Comando: MAPEAR COMPRAS PENDENTES",
+      "Comando: ACOMPANHAR PEDIDOS",
+      "Comando: IDENTIFICAR RISCO DE FALTA",
+      "Comando: CONFERIR DOCUMENTOS",
+      "Comando: AUDITAR RECEBIMENTOS"
+    ],
+    "comandos": [
+      "MAPEAR COMPRAS PENDENTES",
+      "ACOMPANHAR PEDIDOS",
+      "IDENTIFICAR RISCO DE FALTA",
+      "CONFERIR DOCUMENTOS",
+      "AUDITAR RECEBIMENTOS"
+    ],
+    "ligarAoIniciar": true
+  },
+  "vex-financeiro-custos": {
+    "nome": "06 · Financeiro, Custos e Performance",
+    "tipo": "local",
+    "pasta": "agentes-vex/06-financeiro-custos",
+    "comando": "node",
+    "args": [
+      "server.js"
+    ],
+    "env": {
+      "PORT": "4416"
+    },
+    "porta": 4416,
+    "abre": "/",
+    "compartilhar": [
+      "agentes-vex"
+    ],
+    "papel": "Você é o agente 06 — FINANCEIRO, CUSTOS E PERFORMANCE do Grupo VEX, dentro do escritório de agentes. Siga o CLAUDE.md desta pasta: ele tem o seu prompt completo, a sua memória e as regras de operação. Responda em português do Brasil.",
+    "sobre": "Consolidar dados financeiros e custos por obra, identificar desvios e preparar análises confiáveis para decisão.",
+    "dicas": [
+      "Sistema principal: ERP/financeiro e controles de custo disponíveis; Sistema VEX e GoBuilder para vínculo com obra, avanço e orçamento.",
+      "Comando: CONSOLIDAR CUSTOS POR OBRA",
+      "Comando: ANALISAR ORÇADO X REALIZADO",
+      "Comando: PROJETAR FLUXO DE CAIXA",
+      "Comando: ANALISAR MARGEM",
+      "Comando: GERAR ALERTAS FINANCEIROS"
+    ],
+    "comandos": [
+      "CONSOLIDAR CUSTOS POR OBRA",
+      "ANALISAR ORÇADO X REALIZADO",
+      "PROJETAR FLUXO DE CAIXA",
+      "ANALISAR MARGEM",
+      "GERAR ALERTAS FINANCEIROS"
+    ],
+    "ligarAoIniciar": true
+  },
+  "vex-comercial-contratos": {
+    "nome": "07 · Comercial, Propostas e Contratos",
+    "tipo": "local",
+    "pasta": "agentes-vex/07-comercial-contratos",
+    "comando": "node",
+    "args": [
+      "server.js"
+    ],
+    "env": {
+      "PORT": "4417"
+    },
+    "porta": 4417,
+    "abre": "/",
+    "compartilhar": [
+      "agentes-vex"
+    ],
+    "papel": "Você é o agente 07 — COMERCIAL, PROPOSTAS E CONTRATOS do Grupo VEX, dentro do escritório de agentes. Siga o CLAUDE.md desta pasta: ele tem o seu prompt completo, a sua memória e as regras de operação. Responda em português do Brasil.",
+    "sobre": "Organizar prospecção, oportunidades, propostas e obrigações contratuais das empresas do grupo.",
+    "dicas": [
+      "Sistema principal: CRM, planilhas e repositório de propostas/contratos disponíveis; painel comercial VEX se existir.",
+      "Comando: ORGANIZAR PIPELINE",
+      "Comando: QUALIFICAR OPORTUNIDADES",
+      "Comando: PREPARAR PROPOSTA",
+      "Comando: REVISAR OBRIGAÇÕES",
+      "Comando: IDENTIFICAR FOLLOW-UPS"
+    ],
+    "comandos": [
+      "ORGANIZAR PIPELINE",
+      "QUALIFICAR OPORTUNIDADES",
+      "PREPARAR PROPOSTA",
+      "REVISAR OBRIGAÇÕES",
+      "IDENTIFICAR FOLLOW-UPS"
+    ],
+    "ligarAoIniciar": true
+  },
+  "vex-marketing-conteudo": {
+    "nome": "08 · Marketing e Conteúdo",
+    "tipo": "local",
+    "pasta": "agentes-vex/08-marketing-conteudo",
+    "comando": "node",
+    "args": [
+      "server.js"
+    ],
+    "env": {
+      "PORT": "4418"
+    },
+    "porta": 4418,
+    "abre": "/",
+    "compartilhar": [
+      "agentes-vex"
+    ],
+    "papel": "Você é o agente 08 — MARKETING E CONTEÚDO DO GRUPO VEX do Grupo VEX, dentro do escritório de agentes. Siga o CLAUDE.md desta pasta: ele tem o seu prompt completo, a sua memória e as regras de operação. Responda em português do Brasil.",
+    "sobre": "Planejar e organizar comunicação e conteúdo de cada marca, gerando materiais coerentes com a estratégia e medindo resultados reais.",
+    "dicas": [
+      "Sistema principal: Calendário editorial, arquivos de marca, canais sociais e métricas conectados/autorizados.",
+      "Comando: MONTAR CALENDÁRIO",
+      "Comando: CRIAR ROTEIRO DE REELS",
+      "Comando: PLANEJAR CAMPANHA",
+      "Comando: ANALISAR RESULTADOS",
+      "Comando: ORGANIZAR BANCO DE CONTEÚDO"
+    ],
+    "comandos": [
+      "MONTAR CALENDÁRIO",
+      "CRIAR ROTEIRO DE REELS",
+      "PLANEJAR CAMPANHA",
+      "ANALISAR RESULTADOS",
+      "ORGANIZAR BANCO DE CONTEÚDO"
+    ],
+    "ligarAoIniciar": true
+  },
+  "vex-atendimento-pos-obra": {
+    "nome": "09 · Atendimento, Pós-obra e Assistência",
+    "tipo": "local",
+    "pasta": "agentes-vex/09-atendimento-pos-obra",
+    "comando": "node",
+    "args": [
+      "server.js"
+    ],
+    "env": {
+      "PORT": "4419"
+    },
+    "porta": 4419,
+    "abre": "/",
+    "compartilhar": [
+      "agentes-vex"
+    ],
+    "papel": "Você é o agente 09 — ATENDIMENTO, PÓS-OBRA E ASSISTÊNCIA TÉCNICA do Grupo VEX, dentro do escritório de agentes. Siga o CLAUDE.md desta pasta: ele tem o seu prompt completo, a sua memória e as regras de operação. Responda em português do Brasil.",
+    "sobre": "Triar solicitações de clientes, organizar chamados e acompanhar a resolução com rastreabilidade até o encerramento.",
+    "dicas": [
+      "Sistema principal: Sistema VEX para ocorrências e ações, CRM/tickets/e-mail quando disponível; GoBuilder para contexto de obra quando pertinente.",
+      "Comando: TRIAR CHAMADOS",
+      "Comando: ABRIR OCORRÊNCIA",
+      "Comando: PRIORIZAR ASSISTÊNCIA",
+      "Comando: PREPARAR RESPOSTA AO CLIENTE",
+      "Comando: ACOMPANHAR RESOLUÇÃO"
+    ],
+    "comandos": [
+      "TRIAR CHAMADOS",
+      "ABRIR OCORRÊNCIA",
+      "PRIORIZAR ASSISTÊNCIA",
+      "PREPARAR RESPOSTA AO CLIENTE",
+      "ACOMPANHAR RESOLUÇÃO"
+    ],
+    "ligarAoIniciar": true
   }
 }
