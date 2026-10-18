@@ -15,6 +15,7 @@ const fs    = require('fs');
 const path  = require('path');
 const net   = require('net');
 const { spawn } = require('child_process');
+const INTEGRACOES = require('./integracoes'); // Sistema VEX via MCP (somente leitura)
 
 const ROOT = __dirname;
 
@@ -575,6 +576,10 @@ function perguntar(id, texto, modo) {
                 '--permission-mode', modo === 'resolver' ? 'acceptEdits' : 'plan',
                 '--append-system-prompt', s.papel || PAPEL];
   for (const d of s.compartilhar || []) args.push('--add-dir', d);
+  // integrações ligadas no agente.json (ex.: Sistema VEX) → servidor MCP + ferramentas liberadas
+  const integ = INTEGRACOES.argsDoAgente(s.pasta);
+  if (integ.aviso) console.log('  ⚠ ' + id + ': ' + integ.aviso);
+  args.push(...integ.args);
   if (c.sessionId) args.push('--resume', c.sessionId);
 
   c.rodando = true; c.erro = null;
@@ -583,7 +588,7 @@ function perguntar(id, texto, modo) {
   let saida = '', erroSaida = '';
   const proc = spawn(CLAUDE_BIN, args, {
     cwd: s.pasta,
-    env: process.env,
+    env: INTEGRACOES.ambiente(), // inclui as chaves do arquivo de segredos (fora do git)
     stdio: ['pipe', 'pipe', 'pipe']
   });
   c.proc = proc;
