@@ -18,8 +18,8 @@
   "integracoes": [
     {
       "nome": "Sistema VEX",
-      "conectado": false,
-      "acesso": "nenhum"
+      "conectado": true,
+      "acesso": "leitura"
     },
     {
       "nome": "Compras / ERP",
@@ -42,5 +42,5 @@
       "acesso": "nenhum"
     }
   ],
-  "_leia": "Quando uma integração for conectada (MCP, API ou exportação de dados), troque conectado para true e acesso para leitura ou leitura e escrita. O agente só considera disponível o que estiver true aqui."
+  "_leia": "Sistema VEX conectado em modo leitura pelo servidor MCP agentes-vex/mcp-vex (chave VEX_TOKEN_05 no arquivo de segredos, fora do git). Para desligar, volte conectado para false. Escrita ainda não está liberada."
 }
