@@ -25,6 +25,7 @@ const NOMES_DIA = ['domingo', 'segunda', 'terça', 'quarta', 'quinta', 'sexta', 
 /* tudo da reunião vem da configuração, lida na hora: mudou o arquivo, vale na próxima */
 const CFG = () => dep.config().reuniao;
 
+const INTEGRACOES = require('./integracoes'); // Sistema VEX via MCP (somente leitura)
 let dep = null;           // { ROOT, lerRegistro, CLAUDE_BIN }
 let estado = criarVazio();
 let timer = null;
@@ -112,8 +113,9 @@ function perguntaAoAgente(pasta, prompt, papel, limiteMs, extras = []) {
                   '--max-turns', String(4), // no máximo N consultas ao projeto
                   '--append-system-prompt', papel];
     for (const d of extras) args.push('--add-dir', d);
+    args.push(...INTEGRACOES.argsDoAgente(pasta).args); // agente com Sistema VEX conectado consulta os dados na reunião
     const proc = spawn(dep.CLAUDE_BIN, args,
-      { cwd: pasta, env: process.env, stdio: ['pipe', 'pipe', 'pipe'] });
+      { cwd: pasta, env: INTEGRACOES.ambiente(), stdio: ['pipe', 'pipe', 'pipe'] });
 
     let saida = '', erro = '';
     const corta = setTimeout(() => { try { proc.kill(); } catch (e) {} }, limiteMs);
