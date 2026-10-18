@@ -16,6 +16,7 @@ mesmo escritório.
 
 | O quê | Onde |
 | --- | --- |
+| **Escritório de agentes 3D** (bonecos, contratar, ligar, conversar, reunir) | `agentes.html` · no seu computador: http://localhost:4321/sede · demonstração: https://sistemavex.github.io/Escritorio-de-agentes/sede-grupo-vex/agentes.html |
 | **Escritório virtual 3D** (tela cheia, ambientes e tour) | `escritorio.html` · online: https://sistemavex.github.io/Escritorio-de-agentes/sede-grupo-vex/escritorio.html |
 | Apresentação completa (10 entregáveis + modelo 3D navegável) | `index.html` (abrir no navegador, com internet para fontes e three.js) |
 | Perspectivas prontas (1920 × 1080) | pasta `renders/` |
@@ -24,6 +25,32 @@ mesmo escritório.
 | Modelo 3D para o escritório de arquitetura | `modelo/sede-grupo-vex.glb` (Blender, Enscape, D5 Render, Twinmotion, SketchUp com importador glTF) |
 | Logos oficiais usadas, sem alteração | `assets/logos/` |
 | Resumo do briefing | `BRIEFING.md` |
+
+## Escritório de agentes 3D
+
+Os agentes de IA do Escritório de Agentes trabalham dentro do modelo da sede:
+
+- cada agente é um boneco sentado numa **mesa real** do projeto (bancadas de operações,
+  CEO, planejamento, jurídico, financeiro, recepção);
+- **Descansar** leva o agente para a copa ou a sala de jogos; **Reunião** leva para a sala de reunião;
+- painel com **Equipe**, **Contratar** (vagas sugeridas para o Grupo VEX e cadastro de agente com
+  sistema local ou site) e **Reunião** (os agentes consultam o próprio projeto pelo Claude Code e
+  sai um briefing do dia);
+- na ficha do agente: ligar e desligar o sistema, abrir o sistema dentro do escritório, ver o log,
+  **conversar** com ele pelo Claude Code, trocar de mesa e editar nome, função e emoji.
+
+Para usar de verdade, rode o escritório no seu computador, a partir da raiz do repositório:
+
+```bash
+npm start
+```
+
+e abra **http://localhost:4321/sede**. A equipe é a mesma do escritório isométrico
+(`data/equipe.json`), então os dois mostram as mesmas pessoas. No escritório isométrico
+há um botão **🏢 Sede 3D**.
+
+O link público (GitHub Pages) abre em **modo demonstração**: dá para contratar e mover
+agentes, mas ligar sistemas, conversar e reunir só funcionam com o servidor no seu computador.
 
 ## Entregáveis
 

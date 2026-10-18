@@ -54,6 +54,8 @@ const TYPES = {
   '.svg':  'image/svg+xml',
   '.png':  'image/png',
   '.jpg':  'image/jpeg',
+  '.glb':  'model/gltf-binary',
+  '.md':   'text/markdown; charset=utf-8',
   '.ico':  'image/x-icon'
 };
 
@@ -834,8 +836,10 @@ const servidor = http.createServer(async (req, res) => {
   if (rota.startsWith('/api/')) return json(res, 404, { ok: false, motivo: 'rota não existe' });
 
   /* ---- estáticos ---- */
-  const rel = rota === '/' ? '/index.html' : rota;
-  if (!/^\/(index\.html|favicon\.svg|css\/|js\/)/.test(rel)) {
+  // escritório 3D da sede do Grupo VEX (pasta sede-grupo-vex)
+  if (rota === '/sede' || rota === '/sede/') { res.writeHead(302, { Location: '/sede-grupo-vex/agentes.html' }); res.end(); return; }
+  const rel = rota === '/' ? '/index.html' : (rota === '/sede-grupo-vex/' ? '/sede-grupo-vex/agentes.html' : rota);
+  if (!/^\/(index\.html|favicon\.svg|css\/|js\/|sede-grupo-vex\/)/.test(rel)) {
     res.writeHead(404, { 'Content-Type': 'text/plain' }).end('404'); return;
   }
   const arquivo = path.join(ROOT, path.normalize(rel).replace(/^(\.\.[/\\])+/, ''));

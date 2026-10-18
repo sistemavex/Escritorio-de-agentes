@@ -10,7 +10,13 @@ http.createServer((req, res) => {
     const rel = u.searchParams.get('path') || '';
     if (!ALLOWED.test(rel)) { res.writeHead(400); return res.end('caminho recusado'); }
     const out = path.join(root, rel); fs.mkdirSync(path.dirname(out), { recursive: true });
-    const chunks = []; req.on('data', c => chunks.push(c)); req.on('end', () => { fs.writeFileSync(out, Buffer.concat(chunks)); res.writeHead(200); res.end('ok'); console.log('gravado', rel); });
+    const chunks = []; req.on('data', c => chunks.push(c)); req.on('end', () => {
+      let buf = Buffer.concat(chunks);
+      // aceita também um dataURL em texto (POST simples, vindo de outra porta local)
+      const txt = buf.slice(0, 40).toString();
+      if (txt.startsWith('data:')) buf = Buffer.from(buf.toString().split(',')[1], 'base64');
+      fs.writeFileSync(out, buf); res.writeHead(200, { 'Access-Control-Allow-Origin': '*' }); res.end('ok'); console.log('gravado', rel);
+    });
     return;
   }
   let p = decodeURIComponent(u.pathname); if (p.endsWith('/')) p += 'index.html';

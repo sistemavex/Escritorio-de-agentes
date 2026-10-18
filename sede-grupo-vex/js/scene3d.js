@@ -1029,8 +1029,16 @@
     const cam = new THREE.PerspectiveCamera(45, canvas.clientWidth / canvas.clientHeight, 0.05, 200);
     const ctl = new THREE.OrbitControls(cam, canvas);
     ctl.enableDamping = true; ctl.dampingFactor = 0.09; ctl.maxPolarAngle = Math.PI * 0.495;
-    let raf = 0, alive = true;
-    const loop = () => { raf = 0; if (!alive) return; const moved = ctl.update(); r.render(scene, cam); if (moved) req(); };
+    let raf = 0, alive = true, lastT = null;
+    const frameFns = [];   // animações externas (bonecos): devolvem true enquanto precisam de quadro
+    const loop = (t) => {
+      raf = 0; if (!alive) return;
+      const dt = lastT === null ? 0 : Math.min(0.05, Math.max(0, (t - lastT) / 1000)); lastT = t;
+      const moved = ctl.update();
+      let anim = false; for (const f of frameFns) { if (f(dt, t / 1000)) anim = true; }
+      r.render(scene, cam);
+      if (moved || anim) req(); else lastT = null;
+    };
     const req = () => { if (!raf) raf = requestAnimationFrame(loop); };
     ctl.addEventListener('change', req);
     function go(id) {
@@ -1041,7 +1049,16 @@
     function resize() { const w = canvas.clientWidth, h = canvas.clientHeight; if (!w || !h) return; r.setSize(w, h, false); cam.aspect = w / h; cam.updateProjectionMatrix(); req(); }
     new ResizeObserver(resize).observe(canvas);
     go('aerea');
-    return { go, setCeiling(on) { groups.ceiling.visible = on; groups.backdrop.visible = on; req(); }, render: req, stop() { alive = false; } };
+    // aproxima a câmera de um ponto da planta (x, y em metros), mantendo a direção atual
+    function focus(x, y, z = 1.0, dist = 5.5) {
+      const tgt = V(x, y, z), dir = cam.position.clone().sub(ctl.target).normalize();
+      if (dir.y < 0.35) { dir.y = 0.55; dir.normalize(); }
+      ctl.target.copy(tgt); cam.position.copy(tgt.clone().add(dir.multiplyScalar(dist))); ctl.update(); req();
+    }
+    return {
+      go, focus, setCeiling(on) { groups.ceiling.visible = on; groups.backdrop.visible = on; req(); }, render: req, stop() { alive = false; },
+      scene, camera: cam, controls: ctl, renderer: r, canvas, onFrame(fn) { frameFns.push(fn); req(); },
+    };
   }
 
   // exporta o modelo em .glb (abre no Blender, SketchUp, Enscape, D5 Render, Twinmotion)

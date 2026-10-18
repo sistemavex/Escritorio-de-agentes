@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Agentes VEX</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+/* Escritório de agentes 3D: modelo da sede à esquerda, painel de operação à direita. Tema escuro único. */
+:root {
+  --bg: #111516; --panel: #171c1e; --panel-2: #1d2326; --line: #2a3234; --ink: #e7eae8; --ink-2: #93a0a1;
+  --petrol: #2f8f94; --petrol-2: #1f5e63; --orange: #e27c40; --ok: #3fae7a; --warn: #e0a238; --bad: #e0603a; --meet: #a78bfa;
+  --f-display: 'Archivo', 'Arial Narrow', Arial, sans-serif;
+  --f-body: 'IBM Plex Sans', 'Segoe UI', Arial, sans-serif;
+  --f-mono: 'IBM Plex Mono', ui-monospace, Consolas, monospace;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html, body { height: 100%; margin: 0; }
+body { background: var(--bg); color: var(--ink); font: 400 14px/1.45 var(--f-body); overflow: hidden; }
+button, input, select, textarea { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--orange); outline-offset: 1px; }
+.app { display: grid; grid-template-columns: minmax(0, 1fr) 380px; height: 100%; }
+main { position: relative; min-width: 0; min-height: 0; }
+canvas#c { display: block; width: 100%; height: 100%; touch-action: none; }
+.hud { position: absolute; top: calc(12px + env(safe-area-inset-top, 0px)); left: calc(14px + env(safe-area-inset-left, 0px)); right: 14px; display: flex; gap: 10px; align-items: flex-start; justify-content: space-between; pointer-events: none; }
+.brand { display: flex; gap: 10px; align-items: center; pointer-events: auto; background: rgba(17,21,22,.82); border: 1px solid var(--line); border-radius: 6px; padding: 7px 12px 7px 7px; backdrop-filter: blur(6px); }
+.brand .plate { width: 36px; height: 36px; background: #fff; border-radius: 2px; flex: none; }
+.brand .plate img { width: 100%; height: 100%; display: block; }
+.brand b { display: block; font: 800 13px/1.1 var(--f-display); font-stretch: 118%; letter-spacing: .12em; }
+.brand small { font: 500 11px var(--f-mono); color: var(--ink-2); }
+.views { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; pointer-events: auto; }
+.views select, .views label, .chipbtn { background: rgba(17,21,22,.86); border: 1px solid var(--line); border-radius: 5px; padding: 8px 10px; font: 600 12px/1 var(--f-mono); display: inline-flex; gap: 7px; align-items: center; cursor: pointer; }
+.views input { accent-color: var(--petrol); margin: 0; }
+.conn { position: absolute; left: calc(14px + env(safe-area-inset-left, 0px)); bottom: calc(12px + env(safe-area-inset-bottom, 0px)); font: 500 12px var(--f-mono); background: rgba(17,21,22,.86); border: 1px solid var(--line); border-radius: 5px; padding: 8px 10px; max-width: min(560px, calc(100% - 28px)); }
+.conn i { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 7px; vertical-align: 0; }
+.loading { position: absolute; inset: 0; display: grid; place-items: center; background: var(--bg); color: var(--ink-2); font: 500 13px var(--f-mono); }
+.loading[hidden] { display: none !important; }
+
+aside { background: var(--panel); border-left: 1px solid var(--line); display: flex; flex-direction: column; min-height: 0; padding-right: env(safe-area-inset-right, 0px); }
+.tabs { display: grid; grid-template-columns: repeat(3, 1fr); border-bottom: 1px solid var(--line); }
+.tabs button { background: none; border: 0; border-bottom: 2px solid transparent; padding: 14px 8px 12px; font: 600 12px/1 var(--f-mono); letter-spacing: .06em; text-transform: uppercase; color: var(--ink-2); cursor: pointer; }
+.tabs button[aria-selected="true"] { color: var(--ink); border-bottom-color: var(--petrol); }
+.pane { overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 14px; min-height: 0; flex: 1; }
+.pane[hidden] { display: none !important; }
+h2 { font: 800 18px/1.15 var(--f-display); font-stretch: 108%; margin: 0; }
+h3 { font: 600 11px/1.3 var(--f-mono); letter-spacing: .1em; text-transform: uppercase; color: var(--ink-2); margin: 6px 0 0; }
+p { margin: 0; }
+.muted { color: var(--ink-2); font-size: 13px; }
+.row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.btn { background: var(--panel-2); border: 1px solid var(--line); border-radius: 5px; padding: 8px 11px; font: 600 12px/1.1 var(--f-mono); cursor: pointer; }
+.btn:hover:not(:disabled) { border-color: #43504f; }
+.btn.primary { background: var(--petrol-2); border-color: var(--petrol); color: #fff; }
+.btn.danger { border-color: #6a3326; color: #ffb39c; }
+.btn:disabled { opacity: .45; cursor: not-allowed; }
+.btn[aria-pressed="true"] { background: var(--petrol); border-color: var(--petrol); color: #fff; }
+.list { display: flex; flex-direction: column; gap: 4px; }
+.agent { display: grid; grid-template-columns: 30px minmax(0, 1fr) auto; gap: 10px; align-items: center; padding: 9px 10px; border-radius: 6px; border: 1px solid transparent; cursor: pointer; text-align: left; background: none; width: 100%; }
+.agent:hover { background: var(--panel-2); }
+.agent[aria-current="true"] { border-color: var(--petrol); background: #182628; }
+.agent .em { font-size: 20px; text-align: center; }
+.agent b { display: block; font-weight: 600; font-size: 14px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.agent span { display: block; font-size: 12px; color: var(--ink-2); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pill { font: 600 10.5px/1 var(--f-mono); letter-spacing: .04em; padding: 5px 7px; border-radius: 99px; white-space: nowrap; border: 1px solid currentColor; }
+.st-trabalhando { color: var(--ok); } .st-descanso { color: var(--warn); } .st-reuniao { color: var(--meet); } .st-fora { color: #7b8687; }
+.sys-no-ar { color: var(--ok); } .sys-desligado { color: #8d9899; } .sys-subindo { color: var(--warn); } .sys-caiu { color: var(--bad); } .sys-web { color: #7fb7ff; }
+.card { background: var(--panel-2); border: 1px solid var(--line); border-radius: 8px; padding: 14px; display: flex; flex-direction: column; gap: 12px; }
+.card .head { display: grid; grid-template-columns: 40px minmax(0,1fr); gap: 10px; align-items: center; }
+.card .head .em { font-size: 28px; text-align: center; }
+.field { display: flex; flex-direction: column; gap: 5px; }
+.field label { font: 500 11px var(--f-mono); color: var(--ink-2); letter-spacing: .05em; }
+.field input, .field select, .field textarea { background: #0f1314; border: 1px solid var(--line); border-radius: 5px; padding: 8px 9px; min-width: 0; width: 100%; }
+.field textarea { resize: vertical; min-height: 70px; }
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.hire { display: grid; grid-template-columns: 30px minmax(0,1fr) auto; gap: 10px; align-items: start; padding: 10px; border: 1px solid var(--line); border-radius: 6px; }
+.hire .em { font-size: 20px; text-align: center; }
+.hire b { font-weight: 600; }
+.hire p { font-size: 12.5px; color: var(--ink-2); margin-top: 2px; }
+.notice { font-size: 12.5px; border-left: 2px solid var(--orange); padding: 6px 0 6px 10px; color: #f1c7ab; }
+.notice.ok { border-left-color: var(--ok); color: #bfe6d0; }
+.falas { display: flex; flex-direction: column; gap: 8px; }
+.fala { background: #0f1314; border: 1px solid var(--line); border-radius: 6px; padding: 10px; font-size: 13px; white-space: pre-wrap; }
+.fala b { font-family: var(--f-mono); font-size: 12px; color: var(--petrol); display: block; margin-bottom: 4px; white-space: normal; }
+.toast { position: fixed; left: 50%; bottom: calc(18px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); background: #0f1314; border: 1px solid var(--petrol); border-radius: 6px; padding: 10px 14px; font: 500 13px var(--f-mono); z-index: 50; max-width: calc(100% - 32px); }
+.toast[hidden] { display: none !important; }
+
+dialog { background: var(--panel); color: var(--ink); border: 1px solid var(--line); border-radius: 10px; padding: 0; width: min(760px, calc(100vw - 32px)); max-height: calc(100vh - 40px); }
+dialog::backdrop { background: rgba(5,7,8,.6); }
+.dlg { display: flex; flex-direction: column; max-height: calc(100vh - 42px); }
+.dlg header { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 12px 16px; border-bottom: 1px solid var(--line); }
+.dlg .body { padding: 16px; overflow: auto; display: flex; flex-direction: column; gap: 12px; min-height: 0; }
+.dlg iframe { width: 100%; height: min(70vh, 640px); border: 1px solid var(--line); border-radius: 6px; background: #fff; }
+.chatlog { display: flex; flex-direction: column; gap: 8px; max-height: 46vh; overflow: auto; }
+.msg { padding: 9px 11px; border-radius: 8px; font-size: 13.5px; white-space: pre-wrap; max-width: 92%; }
+.msg.voce { align-self: flex-end; background: var(--petrol-2); }
+.msg.agente { align-self: flex-start; background: #0f1314; border: 1px solid var(--line); }
+pre.log { background: #0b0e0f; border: 1px solid var(--line); border-radius: 6px; padding: 10px; font: 12px/1.45 var(--f-mono); max-height: 60vh; overflow: auto; white-space: pre-wrap; margin: 0; }
+
+@media (max-width: 860px) {
+  .app { grid-template-columns: 1fr; grid-template-rows: minmax(0, 1fr) minmax(0, 46%); }
+  aside { border-left: 0; border-top: 1px solid var(--line); padding-left: env(safe-area-inset-left, 0px); }
+  .brand small { display: none; }
+  .conn { display: none; }
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <main>
+    <canvas id="c" aria-label="Escritório 3D da sede do Grupo VEX com os agentes"></canvas>
+    <div class="hud">
+      <div class="brand"><div class="plate"><img id="logo" alt="Logo oficial do Grupo VEX" width="500" height="500"></div><div><b>AGENTES VEX</b><small>sede · escritório de agentes</small></div></div>
+      <div class="views">
+        <select id="view" aria-label="Câmera"></select>
+        <label><input type="checkbox" id="ceiling"> Teto</label>
+      </div>
+    </div>
+    <div class="conn" id="conn">conectando…</div>
+    <div class="loading" id="loading">montando o escritório…</div>
+  </main>
+  <aside>
+    <div class="tabs" role="tablist">
+      <button role="tab" id="tab-equipe" aria-selected="true" data-p="equipe">Equipe</button>
+      <button role="tab" id="tab-contratar" aria-selected="false" data-p="contratar">Contratar</button>
+      <button role="tab" id="tab-reuniao" aria-selected="false" data-p="reuniao">Reunião</button>
+    </div>
+    <section class="pane" id="p-equipe"></section>
+    <section class="pane" id="p-contratar" hidden></section>
+    <section class="pane" id="p-reuniao" hidden></section>
+  </aside>
+</div>
+<dialog id="dlg"><div class="dlg"><header><h2 id="dlg-title"></h2><button class="btn" id="dlg-close" type="button">Fechar</button></header><div class="body" id="dlg-body"></div></div></dialog>
+<div class="toast" id="toast" hidden></div>
+
+<script src="https://cdn.jsdelivr.net/npm/three@0.147.0/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.147.0/examples/js/controls/OrbitControls.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.147.0/examples/js/environments/RoomEnvironment.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.147.0/examples/js/geometries/RoundedBoxGeometry.js"></script>
+<script src="/config.js" onerror="void 0"></script>
+<script src="js/logos.js"></script>
+<script src="js/model.js"></script>
+<script src="js/plan.js"></script>
+<script src="js/scene3d.js"></script>
+<script src="js/agentes3d.js"></script>
+<script src="js/agentes-ui.js"></script>
+</body>
+</html>
