@@ -16,6 +16,7 @@ mesmo escritório.
 
 | O quê | Onde |
 | --- | --- |
+| **Escritório virtual 3D** (tela cheia, ambientes e tour) | `escritorio.html` · online: https://sistemavex.github.io/Escritorio-de-agentes/sede-grupo-vex/escritorio.html |
 | Apresentação completa (10 entregáveis + modelo 3D navegável) | `index.html` (abrir no navegador, com internet para fontes e three.js) |
 | Perspectivas prontas (1920 × 1080) | pasta `renders/` |
 | Planta baixa humanizada | `planta-baixa.svg` |
