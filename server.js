@@ -375,9 +375,14 @@ async function ligarDeFato(id) {
      que o log: para ver a saída de um sistema, rode o comando dele no
      terminal, que aí ela aparece normalmente. */
   const win = process.platform === 'win32';
-  const child = spawn(s.comando, s.args || [], {
+  /* "node" sobe direto, sem o cmd.exe no meio: destacado, o cmd fica sem
+     console e o node que ele chama abre uma janela própria na tela (o
+     windowsHide não alcança o neto). Direto, o node destacado não tem
+     janela nenhuma. npm e afins continuam precisando do shell. */
+  const direto = win && /^node(\.exe)?$/i.test(String(s.comando));
+  const child = spawn(direto ? process.execPath : s.comando, s.args || [], {
     cwd: s.pasta,
-    shell: win,
+    shell: win && !direto,
     env: Object.assign({}, process.env, s.env || {}),
     detached: true,
     windowsHide: true,
