@@ -169,6 +169,14 @@ WHATSAPP"), que repassa pela Z-API. O webhook e a chave ficam só no
 `data/config.json`; a chave precisa ser igual à do filtro do cenário. Teste:
 `POST /api/whatsapp/teste`.
 
+**Perguntas no grupo.** Com `whatsapp.perguntas: true`, o dono escreve no
+grupo "Otto, como estão os RDOs da obra 34.2?" e o Otto responde ali, em
+1 a 3 minutos, só lendo os dados e com as últimas mensagens do grupo como
+contexto. O Sistema VEX guarda as mensagens de texto do grupo (webhook do
+Z-API, SQL X03) e o escritório as lê de 20 em 20 segundos pela API dos agentes
+(`/api/agentes/grupo`, chave do agente 01). Só os telefones em
+`AGENTES_WHATSAPP_DONOS` (variável na Vercel) podem perguntar.
+
 **Reunião semanal.** `reuniao` em `data/config.json`: sexta às 17h30, com os
 agentes marcados "participa da reunião" na ficha. Rodada 1: cada um traz os 3
 problemas da semana com dados do Sistema VEX. Rodada 2 (`rodada2: true`): cada

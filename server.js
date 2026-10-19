@@ -555,6 +555,9 @@ const ROTINAS = require('./rotinas').init({ ROOT, lerRegistro, CLAUDE_BIN, INTEG
   avisar: (t, x, p) => AVISOS.avisar(t, x, p).catch(() => {}),
   nomeDoAgente: (sis) => { const a = equipeDoDisco().find(a => a.sistema === sis); return a ? a.name : null; } });
 
+/* perguntas do dono no grupo do WhatsApp, respondidas pelo agente — ver perguntas.js */
+const PERGUNTAS = require('./perguntas').init({ ROOT, lerRegistro, CLAUDE_BIN, INTEGRACOES, WHATS, equipe: equipeDoDisco, config: lerConfig });
+
 const PAPEL =
   'Você é o agente responsável por este sistema dentro do escritório de agentes, ' +
   'o painel que o dono usa para acompanhar os agentes dele. Responda em português do ' +
@@ -780,6 +783,8 @@ const servidor = http.createServer(async (req, res) => {
   if (rota === '/api/whatsapp/teste' && req.method === 'POST') {
     return json(res, 200, await WHATS.enviar('🏢 *Escritório VEX*\nTeste de envio dos agentes para este grupo. Se você está lendo, está funcionando.', 'teste'));
   }
+
+  if (rota === '/api/perguntas' && req.method === 'GET') return json(res, 200, PERGUNTAS.estado());
 
   /* rotinas: tarefas com dia e hora para cada agente */
   if (rota === '/api/rotinas' && req.method === 'GET') return json(res, 200, ROTINAS.estadoAtual());
