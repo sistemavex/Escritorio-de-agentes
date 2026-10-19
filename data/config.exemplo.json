@@ -33,6 +33,7 @@
     "rotinas": true,
     "reuniao": true,
     "_leia": "Webhook do cenário do Make que repassa ao grupo pela Z-API. A chave tem de ser igual à do filtro do cenário. Preencha no data/config.json, nunca aqui.",
-    "perguntas": true
+    "perguntas": true,
+    "alertas": true
   }
 }

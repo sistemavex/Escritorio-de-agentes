@@ -560,6 +560,10 @@ const ROTINAS = require('./rotinas').init({ ROOT, lerRegistro, CLAUDE_BIN, INTEG
   avisar: (t, x, p) => AVISOS.avisar(t, x, p).catch(() => {}),
   nomeDoAgente: (sis) => { const a = equipeDoDisco().find(a => a.sistema === sis); return a ? a.name : null; } });
 
+/* aviso quando o escritório perde o Sistema VEX por mais de 10 minutos — ver saude.js */
+const SAUDE = require('./saude').init({ INTEGRACOES, WHATS, config: lerConfig,
+  avisar: (t, x, p) => AVISOS.avisar(t, x, p).catch(() => {}) });
+
 /* perguntas do dono no grupo do WhatsApp, respondidas pelo agente — ver perguntas.js */
 const PERGUNTAS = require('./perguntas').init({ ROOT, lerRegistro, CLAUDE_BIN, INTEGRACOES, WHATS, equipe: equipeDoDisco, config: lerConfig });
 
@@ -790,6 +794,7 @@ const servidor = http.createServer(async (req, res) => {
   }
 
   if (rota === '/api/perguntas' && req.method === 'GET') return json(res, 200, PERGUNTAS.estado());
+  if (rota === '/api/saude' && req.method === 'GET') return json(res, 200, SAUDE.estado());
 
   /* rotinas: tarefas com dia e hora para cada agente */
   if (rota === '/api/rotinas' && req.method === 'GET') return json(res, 200, ROTINAS.estadoAtual());
