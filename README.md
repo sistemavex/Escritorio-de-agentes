@@ -27,6 +27,11 @@ VEX já vêm cadastrados e ligados. O agente de exemplo (pasta `exemplo-agente`)
 continua no registro como molde.
 
 No Windows:
+- **`INICIAR ESCRITORIO (oculto).vbs`** faz o mesmo sem janela; a saída vai
+  para `data\logs\escritorio.log`. Se o escritório já estiver no ar, não abre outro.
+- **`PARAR ESCRITORIO.cmd`** para o escritório (com ou sem janela) e os painéis dos agentes.
+- **`scripts\inicio-automatico.ps1`** liga o escritório oculto junto com o
+  Windows (atalho na pasta Inicializar); com `-Desligar`, tira o atalho.
 - **`INICIAR ESCRITORIO.cmd`** sobe o escritório e o religa se ele cair.
 - **`CRIAR ATALHO.ps1`** cria um atalho na área de trabalho. Para rodar: botão
   direito no arquivo e depois **Executar com o PowerShell**. O atalho liga o
