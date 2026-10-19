@@ -33,8 +33,8 @@
     },
     {
       "nome": "Financeiro / ERP",
-      "conectado": false,
-      "acesso": "nenhum"
+      "conectado": true,
+      "acesso": "leitura (Sistema VEX, recurso financeiro: contas a pagar, mão de obra da semana, fluxo de caixa 8 semanas, término das obras)"
     },
     {
       "nome": "CRM comercial",

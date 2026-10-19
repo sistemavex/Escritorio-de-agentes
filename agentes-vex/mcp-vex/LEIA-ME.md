@@ -1,7 +1,8 @@
 # Sistema VEX para os agentes (somente leitura)
 
 Servidor MCP sem dependências que dá aos agentes as ferramentas de **leitura** do Sistema VEX:
-`quem_sou`, `obras`, `rdos`, `atividades`, `pendencias`, `suprimentos`, `custos`, `alertas`.
+`quem_sou`, `obras`, `rdos`, `atividades`, `pendencias`, `suprimentos`, `custos`, `alertas`, `financeiro`
+(contas a pagar, atrasadas, mão de obra estimada da semana, fluxo de caixa 8 semanas e projeção ao término das obras).
 Cada agente só enxerga as ferramentas e as obras liberadas na chave dele.
 
 ## Como liga
