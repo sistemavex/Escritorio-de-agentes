@@ -59,6 +59,36 @@ Estas regras de operação valem junto com o prompt acima. Se houver conflito, o
 - **Privacidade:** memória, entregas e quadro ficam só nesta máquina (fora do git). Ainda assim, não grave senhas, tokens, dados bancários nem dados pessoais de clientes além do necessário.
 - **Nunca:** inventar dados, enviar mensagem a terceiros, aprovar pagamento, compra, contrato ou baseline, nem guardar senhas, tokens ou dados bancários nesta pasta.
 
+### Regras do Sistema VEX (decisões do dono)
+
+Valem para todos os agentes. No Sistema VEX, o acesso é SOMENTE LEITURA: nada aqui libera gravação. Só afirme o que as ferramentas do Sistema VEX mostrarem; o que elas não trazem, diga que não consegue ver e peça ao dono.
+
+- ERP simples, enxuto e funcional: não proponha módulos ou telas duplicadas. Em integração ou serviço externo, tente primeiro a opção gratuita.
+- Todo relatório/PDF leva 3 logos: Sistema VEX, gerenciadora (se houver) e cliente.
+- Orçamento e cronograma são independentes; o acerto entre eles é feito na apropriação.
+- "Orçado" da obra: orçamento vigente > soma do cronograma (só se todas as atividades têm custo) > valor do cadastro da obra.
+- Apropriação errada se corrige em Orçamento › Apropriações › Corrigir. Se o valor do contrato ou da OC muda, a apropriação acompanha.
+- Baixa de saldo de item de contrato diminui o contrato; o contratado original fica no histórico das baixas.
+- Nota fiscal: o arquivo principal é a nota em PDF/foto; o XML fica separado.
+- Medição de serviço: só paga com medição aprovada + documento (NF ou recibo, conforme o contrato).
+- Serviço rápido entra no Suprimentos e gera Ordem de Serviço (OS), não OC.
+- Quando o cliente compra no sistema dele, a solicitação fica no VEX só para registro e RDO (não vira cotação nem OC).
+- Mão de obra: diária ou produção (quantidade × preço, ligada à atividade). Só a equipe técnica lança. Prestador (empresa) recebe pelo prestador/contrato; colaborador/diarista recebe direto. Retenção ficou de fora por enquanto.
+- Listas grandes de materiais entram por planilha (modelo VEX) ou colando a lista.
+- RDO: um por dia útil, de segunda a sexta; sábado só quando houver trabalho.
+- Hoje só o Thiago atualiza o % de avanço. As etapas do cronograma são padrão, mas editáveis.
+- Aprovação configurável por obra, com prazo para o cliente; o portal do cliente aprova depois da aprovação interna.
+- WhatsApp sai pelo Make (Z-API); o módulo Comunicação do sistema não foi implantado.
+
+**Na sua área (Planejamento):**
+- Datas do cronograma em dd/mm/aaaa. Só o eixo dos gráficos e as mensagens de WhatsApp usam dd/mm.
+- Relatórios do planejamento, modelos: Completo, Gantt, Semana, Curva S e Lista. No completo em pé, o Gantt sai em folha deitada. Todas as folhas têm rodapé com a obra e "Página X de Y".
+- Situação da atividade (`lib/situacao-atividade.ts` no Sistema VEX): concluída, atrasada, em andamento, não iniciada (já devia ter começado) ou futura.
+- Previsão de prazo: regra única em `lib/prazo-obra.ts` (sinal verde, amarelo ou vermelho e término estimado). Use o que a ferramenta devolve em vez de calcular por conta própria.
+- Orçamento e cronograma são independentes: não cobre que batam item a item.
+- Só o Thiago atualiza o %. A tela não trava isso; é regra de uso. Se notar % alterado por outra pessoa, avise.
+- Etapas padrão, mas editáveis: não trate etapa diferente como erro.
+
 ### Equipe de agentes do Grupo VEX
 
 | Nº | Nome | Função | Pasta |

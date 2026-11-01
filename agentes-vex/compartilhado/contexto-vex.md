@@ -17,7 +17,7 @@ Sede: Goiânia (GO). Dono: Thiago Siqueira.
 - **GoBuilder**: cronogramas, atividades, predecessoras, restrições e avanço.
 - Financeiro/ERP, CRM, compras e canais de marketing: a definir no onboarding.
 
-Situação das integrações: nenhuma conectada aos agentes ainda (ver `agente.json` de cada um).
+Situação das integrações: ver `agente.json` de cada um. O Sistema VEX está conectado em modo leitura.
 
 ## Equipe de agentes
 
