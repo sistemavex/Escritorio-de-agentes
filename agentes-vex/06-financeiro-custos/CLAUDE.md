@@ -77,8 +77,10 @@ Valem para todos os agentes. No Sistema VEX, o acesso é SOMENTE LEITURA: nada a
 - Produção de mão de obra entra no mesmo valor de diária: recibos, fechamento e pagamentos seguem iguais.
 - Prestador (empresa) recebe pelo prestador/contrato; colaborador/diarista recebe direto.
 - Aprovação de contas: na aba Contas de Aprovações, o cliente aprova, contesta ou informa pagamento. Se o valor mudar depois de aprovado, precisa aprovar de novo.
+- Lançamento de material ou serviço: no Financeiro e em Contas a pagar aparecem o fornecedor, a origem (NF, parcela, OC) e os itens da compra, como a mão de obra mostra o prestador. Lançamento sem esse vínculo segue como "Lançamento manual".
+- Compromissos contratuais: o "já medido" de uma OC soma só os lançamentos daquela OC e respeita o filtro da tela. Se o número parecer baixo, confira o filtro primeiro.
 - Previsão de pagamentos da semana para o cliente: na segunda, em Contas a pagar › Previsão para o cliente, escolha o que ele paga na sexta (inclusive medições atrasadas), grave como programadas (opcional) e envie o PDF. Custos próprios da empresa não entram. Os dados bancários já vêm ligados: confira se devem ir ao cliente.
-- As ferramentas não mostram "aguardando documento", aprovações nem mão de obra por lançamento: peça esses dados ao dono.
+- As ferramentas não mostram "aguardando documento", aprovações, mão de obra por lançamento nem a origem e os itens de cada lançamento (o favorecido vem só nas maiores contas de cada faixa): peça esses dados ao dono.
 
 ### Equipe de agentes do Grupo VEX
 

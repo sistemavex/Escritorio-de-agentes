@@ -101,6 +101,7 @@ Valem para todos os agentes. No Sistema VEX, o acesso é SOMENTE LEITURA: nada a
   - Nota com PDF e XML; importar lista de materiais.
   - Previsão de pagamentos da semana para o cliente.
   - Relatório de compras para o cliente; pedido do cliente e previsão de entrega no RDO.
+  - Financeiro mostra fornecedor, NF/OC e itens de cada lançamento de material.
 - Aprovação por obra: para RDO, cotação, OC/OS e medição, a regra diz quem aprova (construtora, gerenciadora, cliente, gerenciadora e cliente, ou qualquer um), com prazo e aprovação tácita opcional. Medição liberada ainda precisa da confirmação da construtora para ir ao financeiro. Contas têm fluxo à parte, com o cliente aprovando, contestando ou informando pagamento.
 - Atenção: o sistema ainda não obriga o OK interno a vir antes do cliente. Trate a ordem como regra de processo.
 - Quando acionar: prazo e cronograma → Rito; orçado, apropriação e auditoria → Otto; RDO, medição e mão de obra em campo → Benício; materiais, OC/OS e notas → Luíza; pagamentos e caixa → Lúcia; proposta e contrato comercial → Analú; marketing → Ana Luíza; cliente pós-obra → Enrico.
