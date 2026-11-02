@@ -83,6 +83,8 @@ Valem para todos os agentes. No Sistema VEX, o acesso é SOMENTE LEITURA: nada a
 - Nota fiscal: a nota em PDF/foto é a que vai para malote, relatório e portal do cliente; o XML fica separado.
 - Malote e relatório de notas: em Financeiro › Notas e malote.
 - Relatório de pedidos: mostra o tempo de cada etapa, separando VEX e cliente.
+- Relatório de compras para o cliente: em Painel de compras › Relatório para o cliente, escolha a obra, o período e os pedidos. Valores e fornecedores só saem com a obra "com valores".
+- RDO: compra do cliente aparece com o nº do pedido dele e a previsão de entrega (data de necessidade mais próxima ainda pendente).
 - As ferramentas não mostram notas, malotes nem insumos orçado × comprado: peça esses dados ao dono.
 
 ### Equipe de agentes do Grupo VEX
