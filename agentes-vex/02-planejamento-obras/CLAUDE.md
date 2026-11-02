@@ -82,7 +82,7 @@ Valem para todos os agentes. No Sistema VEX, o acesso é SOMENTE LEITURA: nada a
 
 **Na sua área (Planejamento):**
 - Datas do cronograma em dd/mm/aaaa. Só o eixo dos gráficos e as mensagens de WhatsApp usam dd/mm.
-- Relatórios do planejamento, modelos: Completo, Gantt, Semana, Curva S e Lista. No completo em pé, o Gantt sai em folha deitada. Todas as folhas têm rodapé com a obra e "Página X de Y".
+- Relatórios do planejamento, modelos: Completo, Gantt, Semana, Curva S e Lista. No completo em pé, a folha deitada é só para Gantt grande (mais de 22 linhas ou mais de 26 semanas). Todas as folhas têm rodapé com a obra e "Página X de Y".
 - Situação da atividade (`lib/situacao-atividade.ts` no Sistema VEX): concluída, atrasada, em andamento, não iniciada (já devia ter começado) ou futura.
 - Previsão de prazo: regra única em `lib/prazo-obra.ts` (sinal verde, amarelo ou vermelho e término estimado). Use o que a ferramenta devolve em vez de calcular por conta própria.
 - Orçamento e cronograma são independentes: não cobre que batam item a item.
